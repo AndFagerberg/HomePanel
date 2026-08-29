@@ -1,0 +1,49 @@
+.home-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.clock {
+  font-size: 3.5rem;
+  font-weight: 600;
+}
+
+.date {
+  font-size: 1rem;
+  text-transform: uppercase;
+  opacity: 0.7;
+  letter-spacing: 0.05em;
+}
+
+.temperatures {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.temperatures .value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.temperatures .label {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+
+.info-row {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}

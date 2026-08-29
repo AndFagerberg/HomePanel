@@ -1,0 +1,21 @@
+# Deploy
+
+Deployment artifacts for the two runtime targets described in [PROJECT.md](../PROJECT.md).
+
+## Linux server (backend + frontend)
+
+Build and run with Docker:
+
+```bash
+docker compose up -d --build
+```
+
+The container serves both the REST API (`/api/dashboard`) and the Angular production build on port 8080.
+
+## Raspberry Pi (display client)
+
+The Pi never builds or runs the backend — it only runs Chromium in kiosk mode against the server's URL.
+
+- [`raspberry-pi/kiosk.sh`](raspberry-pi/kiosk.sh) — starts Chromium in kiosk mode against `DASHBOARD_URL`.
+
+Fas 6 (see PROJECT.md section 38) will add autostart/systemd configuration, WiFi reconnect handling and a watchdog for automatic Chromium restarts.

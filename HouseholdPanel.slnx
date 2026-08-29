@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/HouseholdPanel.Api/HouseholdPanel.Api.csproj" />
+    <Project Path="src/HouseholdPanel.Application/HouseholdPanel.Application.csproj" />
+    <Project Path="src/HouseholdPanel.Domain/HouseholdPanel.Domain.csproj" />
+    <Project Path="src/HouseholdPanel.Infrastructure/HouseholdPanel.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/HouseholdPanel.IntegrationTests/HouseholdPanel.IntegrationTests.csproj" />
+    <Project Path="tests/HouseholdPanel.UnitTests/HouseholdPanel.UnitTests.csproj" />
+  </Folder>
+</Solution>

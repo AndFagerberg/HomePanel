@@ -1,0 +1,19 @@
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--status-color, #555);
+}
+
+.dot.online {
+  --status-color: #3ddc84;
+}
+
+.dot.stale {
+  --status-color: #e0b400;
+}
+
+.dot.unavailable {
+  --status-color: #d94141;
+}

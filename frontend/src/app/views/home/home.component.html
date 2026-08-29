@@ -1,0 +1,28 @@
+<div class="home-view">
+  <div class="clock">{{ time() }}</div>
+  <div class="date">{{ date() }}</div>
+
+  @if (dashboard(); as d) {
+    <div class="temperatures">
+      <div class="indoor">
+        <span class="value">{{ d.indoor.temperature }}°</span>
+        <span class="label">INNE</span>
+      </div>
+      <div class="outdoor">
+        <span class="value">{{ d.weather.temperature }}°</span>
+        <span class="label">{{ d.weather.symbol }}</span>
+      </div>
+    </div>
+
+    <div class="info-row">
+      @if (nextDeparture(); as departure) {
+        <div class="bus">
+          🚌 {{ departure.departure }} • {{ departure.minutes }} min
+        </div>
+      }
+      @if (nextEvent(); as event) {
+        <div class="event">📅 {{ event.title }} {{ event.start }}</div>
+      }
+    </div>
+  }
+</div>

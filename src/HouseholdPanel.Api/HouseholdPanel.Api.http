@@ -1,0 +1,6 @@
+@HouseholdPanel.Api_HostAddress = http://localhost:5188
+
+GET {{HouseholdPanel.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
