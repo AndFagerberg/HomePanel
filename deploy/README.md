@@ -16,6 +16,6 @@ The container serves both the REST API (`/api/dashboard`) and the Angular produc
 
 The Pi never builds or runs the backend — it only runs Chromium in kiosk mode against the server's URL.
 
+- [`raspberry-pi/SETUP.md`](raspberry-pi/SETUP.md) — full step-by-step installation guide (in Swedish).
 - [`raspberry-pi/kiosk.sh`](raspberry-pi/kiosk.sh) — starts Chromium in kiosk mode against `DASHBOARD_URL`.
-
-Fas 6 (see PROJECT.md section 38) will add autostart/systemd configuration, WiFi reconnect handling and a watchdog for automatic Chromium restarts.
+- [`raspberry-pi/xinitrc`](raspberry-pi/xinitrc) — copied to `~/.xinitrc`; disables screen blanking and restarts Chromium automatically if it crashes.

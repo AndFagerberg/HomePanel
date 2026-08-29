@@ -1,0 +1,14 @@
+#!/bin/sh
+# Copied to ~/.xinitrc on the Raspberry Pi. Started automatically by .bash_profile via `startx`.
+
+xset s off
+xset s noblank
+xset -dpms
+
+unclutter -idle 0 &
+
+# Restart Chromium automatically if it crashes or is closed (section 5/38 in PROJECT.md).
+while true; do
+  sh "$(dirname "$0")/kiosk.sh"
+  sleep 2
+done
