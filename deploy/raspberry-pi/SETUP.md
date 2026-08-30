@@ -9,7 +9,7 @@ Vi använder **Raspberry Pi OS Lite** (utan skrivbordsmiljö) + en minimal X-ser
 1. Ladda ner **Raspberry Pi Imager**: https://www.raspberrypi.com/software/
 2. Välj **Raspberry Pi OS Lite (64-bit)**.
 3. Klicka på kugghjulet (avancerade inställningar) innan du flashar och ange:
-   - Hostname, t.ex. `panel-kok`
+   - Hostname, t.ex. `panel`
    - Aktivera SSH
    - Användarnamn/lösenord
    - WiFi SSID/lösenord + WiFi-land

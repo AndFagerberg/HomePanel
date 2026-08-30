@@ -4,7 +4,7 @@
 
 DASHBOARD_URL="${DASHBOARD_URL:-http://household-panel.local}"
 
-exec chromium-browser \
+exec chromium \
   --kiosk \
   --noerrdialogs \
   --disable-infobars \
