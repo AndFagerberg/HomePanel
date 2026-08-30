@@ -5,9 +5,13 @@
 DASHBOARD_URL="${DASHBOARD_URL:-http://household-panel.local}"
 
 exec chromium \
+  --no-memcheck \
   --kiosk \
   --noerrdialogs \
   --disable-infobars \
   --disable-session-crashed-bubble \
-  --check-for-update-interval=31536000 \
+  --disable-translate \
+  --disable-sync \
+  --disable-extensions \
+  --disable-background-networking \
   "$DASHBOARD_URL"
