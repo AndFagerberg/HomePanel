@@ -25,7 +25,11 @@ public static class DependencyInjection
             client.Timeout = TimeSpan.FromSeconds(10);
         });
         services.AddSingleton<IIndoorSensorService, TestDataIndoorSensorService>();
-        services.AddSingleton<ITransportService, TestDataTransportService>();
+        services.AddHttpClient<ITransportService, TrafiklabTransportService>(client =>
+        {
+            client.BaseAddress = new Uri("https://realtime-api.trafiklab.se/");
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
         services.AddSingleton<ICalendarService, TestDataCalendarService>();
         services.AddSingleton<IScheduleService, TestDataScheduleService>();
 

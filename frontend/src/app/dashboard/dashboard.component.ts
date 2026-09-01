@@ -3,21 +3,23 @@ import { DashboardService } from '../core/services/dashboard.service';
 import { StatusIndicatorComponent } from '../shared/components/status-indicator/status-indicator.component';
 import { HomeComponent } from '../views/home/home.component';
 import { WeatherComponent } from '../views/weather/weather.component';
+import { TransportComponent } from '../views/transport/transport.component';
 
 const REFRESH_INTERVAL_MS = 30_000;
 
 // View rotation order and how long each view stays on screen. See PROJECT.md §13.
-const VIEW_ORDER = ['home', 'weather'] as const;
+const VIEW_ORDER = ['home', 'weather', 'transport'] as const;
 type ViewName = (typeof VIEW_ORDER)[number];
 const VIEW_DURATIONS_MS: Record<ViewName, number> = {
   home: 15_000,
   weather: 10_000,
+  transport: 10_000,
 };
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [HomeComponent, WeatherComponent, StatusIndicatorComponent],
+  imports: [HomeComponent, WeatherComponent, TransportComponent, StatusIndicatorComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })

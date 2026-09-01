@@ -1,0 +1,18 @@
+<div class="transport-view">
+  <div class="title">🚌 {{ stopName() }}</div>
+
+  @if (departures().length) {
+    <div class="departure-list">
+      @for (departure of departures(); track departure.departure + departure.line) {
+        <div class="departure">
+          <span class="line">{{ departure.line }}</span>
+          <span class="destination">{{ departure.destination }}</span>
+          <span class="time">{{ departure.departure }}</span>
+          <span class="minutes">{{ departure.minutes }} min</span>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="empty">Inga avgångar</div>
+  }
+</div>

@@ -1,9 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { DashboardService } from '../../core/services/dashboard.service';
 
-// Fas 3: replace with real transport departures view.
 @Component({
   selector: 'app-transport-view',
   standalone: true,
-  template: `<div class="placeholder-view">Transport view – Fas 3</div>`,
+  templateUrl: './transport.component.html',
+  styleUrl: './transport.component.css',
 })
-export class TransportComponent {}
+export class TransportComponent {
+  private readonly dashboardService = inject(DashboardService);
+
+  readonly stopName = computed(() => this.dashboardService.data()?.transport.stopName ?? '');
+  readonly departures = computed(() => this.dashboardService.data()?.transport.departures ?? []);
+}
