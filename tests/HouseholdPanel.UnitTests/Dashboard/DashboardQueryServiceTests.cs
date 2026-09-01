@@ -20,6 +20,10 @@ public sealed class DashboardQueryServiceTests
         var transportService = new FakeTransportService();
         var calendarService = new FakeCalendarService();
         var scheduleService = new FakeScheduleService();
+        var weatherOptions = Options.Create(new WeatherOptions
+        {
+            Locations = [new WeatherLocationOptions { Name = "Öjaby", Latitude = 56.9243, Longitude = 14.7429 }],
+        });
         var transportOptions = Options.Create(new TransportOptions { StopName = "Centralen" });
 
         var sut = new DashboardQueryService(
@@ -28,11 +32,14 @@ public sealed class DashboardQueryServiceTests
             transportService,
             calendarService,
             scheduleService,
+            weatherOptions,
             transportOptions);
 
         var dashboard = await sut.GetDashboardAsync(CancellationToken.None);
 
         Assert.Equal(19.0m, dashboard.Weather.Temperature);
+        Assert.Equal("Öjaby", dashboard.Weather.Name);
+        Assert.Single(dashboard.WeatherLocations);
         Assert.Equal(20.5m, dashboard.Indoor.Temperature);
         Assert.Equal("Centralen", dashboard.Transport.StopName);
         Assert.Single(dashboard.Transport.Departures);
@@ -43,7 +50,7 @@ public sealed class DashboardQueryServiceTests
 
     private sealed class FakeWeatherService : IWeatherService
     {
-        public Task<WeatherForecast> GetCurrentAsync(CancellationToken cancellationToken) =>
+        public Task<WeatherForecast> GetCurrentAsync(WeatherLocationOptions location, CancellationToken cancellationToken) =>
             Task.FromResult(new WeatherForecast(19.0m, 12.0m, 20.0m, "cloudy", 20, 4.0m));
     }
 

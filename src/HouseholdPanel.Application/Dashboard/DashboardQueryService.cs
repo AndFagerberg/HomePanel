@@ -10,11 +10,25 @@ public sealed class DashboardQueryService(
     ITransportService transportService,
     ICalendarService calendarService,
     IScheduleService scheduleService,
+    IOptions<WeatherOptions> weatherOptions,
     IOptions<TransportOptions> transportOptions) : IDashboardQueryService
 {
     public async Task<DashboardDto> GetDashboardAsync(CancellationToken cancellationToken)
     {
-        var weather = await weatherService.GetCurrentAsync(cancellationToken);
+        var weatherLocations = new List<WeatherDto>();
+        foreach (var location in weatherOptions.Value.Locations)
+        {
+            var forecast = await weatherService.GetCurrentAsync(location, cancellationToken);
+            weatherLocations.Add(new WeatherDto(
+                location.Name,
+                forecast.Temperature,
+                forecast.MinimumTemperature,
+                forecast.MaximumTemperature,
+                forecast.Symbol,
+                forecast.PrecipitationProbability,
+                forecast.WindSpeed));
+        }
+
         var indoor = await indoorSensorService.GetCurrentAsync(cancellationToken);
         var departures = await transportService.GetDeparturesAsync(cancellationToken);
         var calendarEvents = await calendarService.GetUpcomingEventsAsync(cancellationToken);
@@ -22,13 +36,8 @@ public sealed class DashboardQueryService(
 
         return new DashboardDto(
             Timestamp: DateTimeOffset.Now,
-            Weather: new WeatherDto(
-                weather.Temperature,
-                weather.MinimumTemperature,
-                weather.MaximumTemperature,
-                weather.Symbol,
-                weather.PrecipitationProbability,
-                weather.WindSpeed),
+            Weather: weatherLocations[0],
+            WeatherLocations: weatherLocations,
             Indoor: new IndoorDto(indoor.Temperature, indoor.Humidity),
             Transport: new TransportDto(
                 transportOptions.Value.StopName,

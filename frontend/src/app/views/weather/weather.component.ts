@@ -1,9 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { DashboardService } from '../../core/services/dashboard.service';
+import { WeatherIconPipe } from '../../shared/pipes/weather-icon.pipe';
 
-// Fas 2: replace with real SMHI-backed weather view.
 @Component({
   selector: 'app-weather-view',
   standalone: true,
-  template: `<div class="placeholder-view">Weather view – Fas 2</div>`,
+  imports: [WeatherIconPipe],
+  templateUrl: './weather.component.html',
+  styleUrl: './weather.component.css',
 })
-export class WeatherComponent {}
+export class WeatherComponent {
+  private readonly dashboardService = inject(DashboardService);
+
+  readonly primary = computed(() => this.dashboardService.data()?.weatherLocations[0] ?? null);
+  readonly otherLocations = computed(
+    () => this.dashboardService.data()?.weatherLocations.slice(1) ?? [],
+  );
+}

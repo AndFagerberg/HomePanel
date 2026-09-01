@@ -2,6 +2,7 @@
 export interface Dashboard {
   timestamp: string;
   weather: WeatherInfo;
+  weatherLocations: WeatherInfo[];
   indoor: IndoorInfo;
   transport: TransportInfo;
   calendar: CalendarEventInfo[];
@@ -9,6 +10,7 @@ export interface Dashboard {
 }
 
 export interface WeatherInfo {
+  name: string;
   temperature: number;
   minimumTemperature: number;
   maximumTemperature: number;

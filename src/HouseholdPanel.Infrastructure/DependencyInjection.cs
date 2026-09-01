@@ -19,7 +19,11 @@ public static class DependencyInjection
         services.Configure<CalendarOptions>(configuration.GetSection(CalendarOptions.SectionName));
         services.Configure<DashboardOptions>(configuration.GetSection(DashboardOptions.SectionName));
 
-        services.AddSingleton<IWeatherService, TestDataWeatherService>();
+        services.AddHttpClient<IWeatherService, SmhiWeatherService>(client =>
+        {
+            client.BaseAddress = new Uri("https://opendata-download-metfcst.smhi.se/");
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
         services.AddSingleton<IIndoorSensorService, TestDataIndoorSensorService>();
         services.AddSingleton<ITransportService, TestDataTransportService>();
         services.AddSingleton<ICalendarService, TestDataCalendarService>();

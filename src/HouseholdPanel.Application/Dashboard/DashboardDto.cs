@@ -4,12 +4,14 @@ namespace HouseholdPanel.Application.Dashboard;
 public sealed record DashboardDto(
     DateTimeOffset Timestamp,
     WeatherDto Weather,
+    IReadOnlyList<WeatherDto> WeatherLocations,
     IndoorDto Indoor,
     TransportDto Transport,
     IReadOnlyList<CalendarEventDto> Calendar,
     IReadOnlyList<ScheduleItemDto> Schedule);
 
 public sealed record WeatherDto(
+    string Name,
     decimal Temperature,
     decimal MinimumTemperature,
     decimal MaximumTemperature,

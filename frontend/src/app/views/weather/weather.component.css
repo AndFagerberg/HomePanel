@@ -1,0 +1,67 @@
+.weather-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 1rem;
+  text-transform: uppercase;
+  opacity: 0.7;
+  letter-spacing: 0.05em;
+}
+
+.primary .location {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.primary .icon {
+  font-size: 3rem;
+  line-height: 1.1;
+}
+
+.primary .temp {
+  font-size: 2.5rem;
+  font-weight: 600;
+}
+
+.primary .range {
+  font-size: 0.95rem;
+  opacity: 0.7;
+}
+
+.primary .details {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.secondary-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.secondary .location {
+  min-width: 4rem;
+  text-align: right;
+}

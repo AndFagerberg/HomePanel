@@ -1,0 +1,29 @@
+<div class="weather-view">
+  <div class="title">VÄDER</div>
+
+  @if (primary(); as w) {
+    <div class="primary">
+      <div class="location">{{ w.name }}</div>
+      <div class="icon">{{ w.symbol | weatherIcon }}</div>
+      <div class="temp">{{ w.temperature }}°</div>
+      <div class="range">{{ w.maximumTemperature }}° / {{ w.minimumTemperature }}°</div>
+      <div class="details">
+        <span>💧 {{ w.precipitationProbability }}%</span>
+        <span>💨 {{ w.windSpeed }} m/s</span>
+      </div>
+    </div>
+  }
+
+  @if (otherLocations().length) {
+    <div class="secondary-list">
+      @for (loc of otherLocations(); track loc.name) {
+        <div class="secondary">
+          <span class="location">{{ loc.name }}</span>
+          <span class="icon">{{ loc.symbol | weatherIcon }}</span>
+          <span class="temp">{{ loc.temperature }}°</span>
+          <span class="wind">💨 {{ loc.windSpeed }} m/s</span>
+        </div>
+      }
+    </div>
+  }
+</div>
