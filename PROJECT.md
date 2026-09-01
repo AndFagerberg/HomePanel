@@ -549,7 +549,7 @@ Svar:
     "windSpeed": 4.0
   },
   "indoor": {
-    "temperature": 21.4,
+    "temperature": 20.5,
     "humidity": 45
   },
   "transport": {
@@ -1034,7 +1034,7 @@ Exempel:
     "temperature": 19
   },
   "indoor": {
-    "temperature": 21.4
+    "temperature": 20.5
   },
   "transport": {
     "departures": []

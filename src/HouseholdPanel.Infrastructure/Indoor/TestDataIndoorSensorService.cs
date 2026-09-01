@@ -8,7 +8,7 @@ public sealed class TestDataIndoorSensorService : IIndoorSensorService
 {
     public Task<IndoorReading> GetCurrentAsync(CancellationToken cancellationToken)
     {
-        var reading = new IndoorReading(Temperature: 21.4m, Humidity: 45);
+        var reading = new IndoorReading(Temperature: 20.5m, Humidity: 45);
 
         return Task.FromResult(reading);
     }

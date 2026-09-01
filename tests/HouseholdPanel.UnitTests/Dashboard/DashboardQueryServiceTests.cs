@@ -33,7 +33,7 @@ public sealed class DashboardQueryServiceTests
         var dashboard = await sut.GetDashboardAsync(CancellationToken.None);
 
         Assert.Equal(19.0m, dashboard.Weather.Temperature);
-        Assert.Equal(21.4m, dashboard.Indoor.Temperature);
+        Assert.Equal(20.5m, dashboard.Indoor.Temperature);
         Assert.Equal("Centralen", dashboard.Transport.StopName);
         Assert.Single(dashboard.Transport.Departures);
         Assert.Equal("3", dashboard.Transport.Departures[0].Line);
@@ -50,7 +50,7 @@ public sealed class DashboardQueryServiceTests
     private sealed class FakeIndoorSensorService : IIndoorSensorService
     {
         public Task<IndoorReading> GetCurrentAsync(CancellationToken cancellationToken) =>
-            Task.FromResult(new IndoorReading(21.4m, 45));
+            Task.FromResult(new IndoorReading(20.5m, 45));
     }
 
     private sealed class FakeTransportService : ITransportService

@@ -13,5 +13,4 @@ exec chromium \
   --disable-translate \
   --disable-sync \
   --disable-extensions \
-  --disable-background-networking \
   "$DASHBOARD_URL"

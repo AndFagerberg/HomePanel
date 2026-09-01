@@ -12,6 +12,8 @@ docker compose up -d --build
 
 The container serves both the REST API (`/api/dashboard`) and the Angular production build on port 8080.
 
+If the server is too small to build or run Docker comfortably, build the release on the development machine and run the published app directly with systemd instead: see [`linux-server-no-docker.md`](linux-server-no-docker.md).
+
 ## Raspberry Pi (display client)
 
 The Pi never builds or runs the backend — it only runs Chromium in kiosk mode against the server's URL.

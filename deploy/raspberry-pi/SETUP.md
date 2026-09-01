@@ -54,7 +54,7 @@ chmod +x ~/kiosk.sh ~/.xinitrc
 Sätt URL:en till backend (se avsnitt 26 i PROJECT.md — föredra ett stabilt hostname framför en hårdkodad IP):
 
 ```bash
-echo 'export DASHBOARD_URL="http://household-panel.local:8080"' >> ~/.bash_profile
+echo 'export DASHBOARD_URL="http://homepanel.lan:8080"' >> ~/.bash_profile
 ```
 
 ## 6. Starta X automatiskt vid inloggning
