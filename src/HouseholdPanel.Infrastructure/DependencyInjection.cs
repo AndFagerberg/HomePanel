@@ -7,6 +7,7 @@ using HouseholdPanel.Infrastructure.Transport;
 using HouseholdPanel.Infrastructure.Weather;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace HouseholdPanel.Infrastructure;
 
@@ -30,7 +31,30 @@ public static class DependencyInjection
             client.BaseAddress = new Uri("https://realtime-api.trafiklab.se/");
             client.Timeout = TimeSpan.FromSeconds(10);
         });
-        services.AddSingleton<ICalendarService, TestDataCalendarService>();
+
+        services.AddHttpClient<GoogleCalendarService>(client =>
+        {
+            client.BaseAddress = new Uri("https://www.googleapis.com/");
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
+
+        services.AddSingleton<ICalendarService>(serviceProvider =>
+        {
+            var calendarOptions = serviceProvider.GetRequiredService<IOptions<CalendarOptions>>().Value;
+            var providerName = calendarOptions.Provider ?? string.Empty;
+
+            if (string.Equals(providerName, "Google", StringComparison.OrdinalIgnoreCase)
+                && !string.IsNullOrWhiteSpace(calendarOptions.CalendarId)
+                && !string.IsNullOrWhiteSpace(calendarOptions.GoogleClientId)
+                && !string.IsNullOrWhiteSpace(calendarOptions.GoogleClientSecret)
+                && !string.IsNullOrWhiteSpace(calendarOptions.GoogleRefreshToken))
+            {
+                return serviceProvider.GetRequiredService<GoogleCalendarService>();
+            }
+
+            return new TestDataCalendarService();
+        });
+
         services.AddSingleton<IScheduleService, TestDataScheduleService>();
 
         return services;

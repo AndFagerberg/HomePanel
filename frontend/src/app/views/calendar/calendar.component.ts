@@ -1,9 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { DashboardService } from '../../core/services/dashboard.service';
 
-// Fas 4: replace with real calendar integration view.
 @Component({
   selector: 'app-calendar-view',
   standalone: true,
-  template: `<div class="placeholder-view">Calendar view – Fas 4</div>`,
+  templateUrl: './calendar.component.html',
+  styleUrl: './calendar.component.css',
 })
-export class CalendarComponent {}
+export class CalendarComponent {
+  private readonly dashboardService = inject(DashboardService);
+
+  readonly upcomingEvents = computed(() => this.dashboardService.data()?.calendar ?? []);
+}

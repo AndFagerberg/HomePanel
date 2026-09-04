@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\HouseholdPanel.Application\HouseholdPanel.Application.csproj" />
     <ProjectReference Include="..\..\src\HouseholdPanel.Domain\HouseholdPanel.Domain.csproj" />
+    <ProjectReference Include="..\..\src\HouseholdPanel.Infrastructure\HouseholdPanel.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
