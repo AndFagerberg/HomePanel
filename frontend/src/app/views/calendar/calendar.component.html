@@ -1,0 +1,16 @@
+<div class="calendar-view">
+  <div class="title">📅 Kommande händelser</div>
+
+  @if (upcomingEvents().length) {
+    <div class="event-list">
+      @for (event of upcomingEvents(); track event.title + event.start) {
+        <div class="event-item">
+          <span class="time">{{ event.start }}</span>
+          <span class="title">{{ event.title }}</span>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="empty">Inga kommande händelser</div>
+  }
+</div>
