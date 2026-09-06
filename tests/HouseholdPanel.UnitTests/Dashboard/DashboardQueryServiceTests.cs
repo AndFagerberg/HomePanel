@@ -1,6 +1,7 @@
 using HouseholdPanel.Application.Abstractions;
 using HouseholdPanel.Application.Configuration;
 using HouseholdPanel.Application.Dashboard;
+using HouseholdPanel.Application.Timers;
 using HouseholdPanel.Domain.Calendar;
 using HouseholdPanel.Domain.Indoor;
 using HouseholdPanel.Domain.Schedule;
@@ -20,6 +21,7 @@ public sealed class DashboardQueryServiceTests
         var transportService = new FakeTransportService();
         var calendarService = new FakeCalendarService();
         var scheduleService = new FakeScheduleService();
+        var timerService = new TimerService(new FakeTimerService());
         var weatherOptions = Options.Create(new WeatherOptions
         {
             Locations = [new WeatherLocationOptions { Name = "Öjaby", Latitude = 56.9243, Longitude = 14.7429 }],
@@ -32,6 +34,7 @@ public sealed class DashboardQueryServiceTests
             transportService,
             calendarService,
             scheduleService,
+            timerService,
             weatherOptions,
             transportOptions);
 
@@ -46,6 +49,7 @@ public sealed class DashboardQueryServiceTests
         Assert.Equal("3", dashboard.Transport.Departures[0].Line);
         Assert.Single(dashboard.Calendar);
         Assert.Empty(dashboard.Schedule);
+        Assert.Empty(dashboard.Timers);
     }
 
     private sealed class FakeWeatherService : IWeatherService
@@ -80,5 +84,17 @@ public sealed class DashboardQueryServiceTests
     {
         public Task<IReadOnlyList<ScheduleItem>> GetUpcomingItemsAsync(CancellationToken cancellationToken) =>
             Task.FromResult<IReadOnlyList<ScheduleItem>>([]);
+    }
+
+    private sealed class FakeTimerService : ITimerService
+    {
+        public Task<IReadOnlyList<HouseholdPanel.Domain.Timers.Timer>> GetActiveAsync(CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyList<HouseholdPanel.Domain.Timers.Timer>>([]);
+
+        public Task<HouseholdPanel.Domain.Timers.Timer> CreateAsync(
+            string name,
+            TimeSpan duration,
+            CancellationToken cancellationToken) =>
+            throw new NotSupportedException();
     }
 }

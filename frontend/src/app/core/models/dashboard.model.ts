@@ -1,3 +1,5 @@
+import { TimerInfo } from './timer.model';
+
 // Mirrors HouseholdPanel.Application.Dashboard.DashboardDto - the only shape the frontend knows about.
 export interface Dashboard {
   timestamp: string;
@@ -7,6 +9,7 @@ export interface Dashboard {
   transport: TransportInfo;
   calendar: CalendarEventInfo[];
   schedule: ScheduleItemInfo[];
+  timers: TimerInfo[];
 }
 
 export interface WeatherInfo {
@@ -45,3 +48,4 @@ export interface ScheduleItemInfo {
   start: string;
   title: string;
 }
+

@@ -1,0 +1,164 @@
+.timers-view {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
+  gap: 1rem;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 1.5rem 2rem 2rem;
+  overflow: auto;
+}
+
+.section-heading,
+.form-heading,
+.timer-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.section-heading {
+  grid-column: 1 / -1;
+}
+
+.eyebrow {
+  color: #b6c5c4;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  margin-top: 0.35rem;
+  font-size: 1.7rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+}
+
+.timer-count {
+  display: grid;
+  width: 2.8rem;
+  height: 2.8rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #e3a857;
+  color: #17212b;
+  font-weight: 700;
+}
+
+.active-timers,
+.new-timer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid #34434d;
+  border-radius: 0.5rem;
+  background: #1c2932;
+}
+
+.timer-card {
+  padding: 1rem;
+  border-radius: 0.4rem;
+  background: #263b35;
+}
+
+.timer-card span {
+  color: #b6c5c4;
+  font-size: 0.85rem;
+}
+
+.timer-card strong {
+  font-size: 1.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.empty-state {
+  color: #b6c5c4;
+}
+
+.new-timer {
+  align-self: start;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: #d1dcda;
+  font-size: 0.85rem;
+}
+
+input,
+.presets button,
+.start-button {
+  min-height: 2.8rem;
+  border: 1px solid #4b5b64;
+  border-radius: 0.4rem;
+  font: inherit;
+}
+
+input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 0.75rem;
+  background: #111820;
+  color: #f4f1e8;
+}
+
+.duration-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.presets {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.presets button {
+  padding: 0.4rem;
+  background: #263b35;
+  color: #f4f1e8;
+  cursor: pointer;
+}
+
+.start-button {
+  padding: 0 1rem;
+  border: 0;
+  background: #e3a857;
+  color: #17212b;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.error {
+  color: #ffb4a8;
+}
+
+@media (max-width: 700px) {
+  .timers-view {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+  }
+}

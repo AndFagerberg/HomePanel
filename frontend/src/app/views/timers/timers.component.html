@@ -1,0 +1,52 @@
+<section class="timers-view">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">⏱ TIMERS</span>
+      <h1>Aktiva timers</h1>
+    </div>
+    <span class="timer-count">{{ timers().length }}</span>
+  </div>
+
+  <div class="active-timers">
+    @for (timer of timers(); track timer.id) {
+      <article class="timer-card">
+        <div>
+          <h2>{{ timer.name }}</h2>
+          <span>Slut {{ timer.endsAt | date: 'HH:mm' }}</span>
+        </div>
+        <strong>{{ remainingTime(timer.endsAt) }}</strong>
+      </article>
+    } @empty {
+      <p class="empty-state">Inga aktiva timers.</p>
+    }
+  </div>
+
+  <form class="new-timer" (ngSubmit)="createTimer()">
+    <div class="form-heading">
+      <span class="eyebrow">NY TIMER</span>
+      <button class="start-button" type="submit" [disabled]="saving()">STARTA</button>
+    </div>
+
+    <label>
+      Namn
+      <input [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" maxlength="40" required>
+    </label>
+
+    <div class="duration-fields">
+      <label>Timmar<input type="number" min="0" max="168" [ngModel]="hours()" (ngModelChange)="hours.set(+$event)" name="hours"></label>
+      <label>Minuter<input type="number" min="0" max="59" [ngModel]="minutes()" (ngModelChange)="minutes.set(+$event)" name="minutes"></label>
+      <label>Sekunder<input type="number" min="0" max="59" [ngModel]="seconds()" (ngModelChange)="seconds.set(+$event)" name="seconds"></label>
+    </div>
+
+    <div class="presets" aria-label="Snabbtider">
+      <button type="button" (click)="setPreset('Ägg', 7)">Ägg · 7 min</button>
+      <button type="button" (click)="setPreset('Pasta', 10)">Pasta · 10 min</button>
+      <button type="button" (click)="setPreset('Pizza', 12)">Pizza · 12 min</button>
+      <button type="button" (click)="setPreset(name(), 30)">30 min</button>
+    </div>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+  </form>
+</section>

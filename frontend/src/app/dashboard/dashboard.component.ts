@@ -5,15 +5,16 @@ import { HomeComponent } from '../views/home/home.component';
 import { WeatherComponent } from '../views/weather/weather.component';
 import { TransportComponent } from '../views/transport/transport.component';
 import { CalendarComponent } from '../views/calendar/calendar.component';
+import { TimersComponent } from '../views/timers/timers.component';
 
 const REFRESH_INTERVAL_MS = 30_000;
 
-const VIEW_ORDER = ['home', 'weather', 'transport', 'calendar'] as const;
+const VIEW_ORDER = ['home', 'weather', 'transport', 'calendar', 'timers'] as const;
 type ViewName = (typeof VIEW_ORDER)[number];
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [HomeComponent, WeatherComponent, TransportComponent, CalendarComponent, StatusIndicatorComponent],
+  imports: [HomeComponent, WeatherComponent, TransportComponent, CalendarComponent, TimersComponent, StatusIndicatorComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })

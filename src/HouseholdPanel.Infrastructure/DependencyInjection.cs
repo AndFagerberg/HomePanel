@@ -4,6 +4,7 @@ using HouseholdPanel.Infrastructure.Calendar;
 using HouseholdPanel.Infrastructure.Indoor;
 using HouseholdPanel.Infrastructure.Schedule;
 using HouseholdPanel.Infrastructure.Transport;
+using HouseholdPanel.Infrastructure.Timers;
 using HouseholdPanel.Infrastructure.Weather;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,6 +57,8 @@ public static class DependencyInjection
         });
 
         services.AddSingleton<IScheduleService, TestDataScheduleService>();
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<ITimerService, InMemoryTimerService>();
 
         return services;
     }

@@ -1,5 +1,6 @@
 using HouseholdPanel.Application.Abstractions;
 using HouseholdPanel.Application.Configuration;
+using HouseholdPanel.Application.Timers;
 using Microsoft.Extensions.Options;
 
 namespace HouseholdPanel.Application.Dashboard;
@@ -10,6 +11,7 @@ public sealed class DashboardQueryService(
     ITransportService transportService,
     ICalendarService calendarService,
     IScheduleService scheduleService,
+    TimerService timerService,
     IOptions<WeatherOptions> weatherOptions,
     IOptions<TransportOptions> transportOptions) : IDashboardQueryService
 {
@@ -33,6 +35,7 @@ public sealed class DashboardQueryService(
         var departures = await transportService.GetDeparturesAsync(cancellationToken);
         var calendarEvents = await calendarService.GetUpcomingEventsAsync(cancellationToken);
         var scheduleItems = await scheduleService.GetUpcomingItemsAsync(cancellationToken);
+        var timers = await timerService.GetActiveAsync(cancellationToken);
 
         return new DashboardDto(
             Timestamp: DateTimeOffset.Now,
@@ -53,6 +56,7 @@ public sealed class DashboardQueryService(
                 .ToList(),
             Schedule: scheduleItems
                 .Select(s => new ScheduleItemDto(s.Start.ToString("HH:mm"), s.Title))
-                .ToList());
+                .ToList(),
+            Timers: timers);
     }
 }

@@ -1,5 +1,7 @@
 namespace HouseholdPanel.Application.Dashboard;
 
+using HouseholdPanel.Application.Timers;
+
 // Presentation-oriented DTO contract returned by GET /api/dashboard. Frontend never sees domain models.
 public sealed record DashboardDto(
     DateTimeOffset Timestamp,
@@ -8,7 +10,8 @@ public sealed record DashboardDto(
     IndoorDto Indoor,
     TransportDto Transport,
     IReadOnlyList<CalendarEventDto> Calendar,
-    IReadOnlyList<ScheduleItemDto> Schedule);
+    IReadOnlyList<ScheduleItemDto> Schedule,
+    IReadOnlyList<TimerDto> Timers);
 
 public sealed record WeatherDto(
     string Name,

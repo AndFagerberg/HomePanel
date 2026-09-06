@@ -28,11 +28,16 @@
         }
       </button>
 
-      <article class="widget timer-widget">
+      <button class="widget timer-widget" type="button" (click)="navigate.emit('timers')">
         <span class="eyebrow">⏱ TIMERS</span>
-        <strong class="large-value">--:--</strong>
-        <span class="description">Inga aktiva timers</span>
-      </article>
+        @if (d.timers.length) {
+          <strong class="large-value">{{ d.timers[0].name }}</strong>
+          <span class="description">{{ remainingTime(d.timers[0].endsAt) }} kvar · {{ d.timers.length }} aktiv</span>
+        } @else {
+          <strong class="large-value">--:--</strong>
+          <span class="description">Inga aktiva timers</span>
+        }
+      </button>
 
       <article class="widget music-widget">
         <span class="eyebrow">♫ NU SPELAS</span>
