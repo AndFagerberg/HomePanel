@@ -64,7 +64,7 @@ WorkingDirectory=/opt/homepanel
 ExecStart=/opt/homepanel/HouseholdPanel.Api
 Restart=always
 RestartSec=5
-Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_ENVIRONMENT=Development
 Environment=ASPNETCORE_URLS=http://0.0.0.0:8080
 
 [Install]

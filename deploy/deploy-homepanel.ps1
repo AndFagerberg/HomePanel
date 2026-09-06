@@ -12,6 +12,7 @@ $ErrorActionPreference = "Stop"
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $frontendDir = Join-Path $repoRoot "frontend"
 $apiProject = Join-Path $repoRoot "src/HouseholdPanel.Api/HouseholdPanel.Api.csproj"
+$developmentSettings = Join-Path $repoRoot "src/HouseholdPanel.Api/appsettings.Development.json"
 $apiWwwroot = Join-Path $repoRoot "src/HouseholdPanel.Api/wwwroot"
 $frontendBuild = Join-Path $frontendDir "dist/frontend/browser"
 $publishRoot = Join-Path $repoRoot "publish"
@@ -67,6 +68,10 @@ try {
     }
 
     Invoke-Step "Publish backend for $Runtime" {
+        if (-not (Test-Path -Path $developmentSettings -PathType Leaf)) {
+            throw "Missing $developmentSettings. Create the ignored local Development configuration before deploying."
+        }
+
         Remove-Item -Recurse -Force $publishDir -ErrorAction SilentlyContinue
         New-Item -ItemType Directory -Force $publishDir | Out-Null
 
@@ -84,6 +89,8 @@ try {
             "-o",
             $publishDir
         )
+
+        Copy-Item -Force $developmentSettings (Join-Path $publishDir "appsettings.Development.json")
     }
 
     Invoke-Step "Create deployment archive" {
@@ -113,7 +120,7 @@ WorkingDirectory=/opt/homepanel
 ExecStart=/opt/homepanel/HouseholdPanel.Api
 Restart=always
 RestartSec=5
-Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_ENVIRONMENT=Development
 Environment=ASPNETCORE_URLS=http://0.0.0.0:$Port
 
 [Install]
