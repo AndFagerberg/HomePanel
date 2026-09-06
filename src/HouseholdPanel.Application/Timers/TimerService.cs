@@ -30,6 +30,11 @@ public sealed class TimerService(ITimerService timerService)
         return ToDto(timer);
     }
 
+    public Task<bool> CancelAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return timerService.CancelAsync(id, cancellationToken);
+    }
+
     private static TimerDto ToDto(Domain.Timers.Timer timer) => new(
         timer.Id,
         timer.Name,

@@ -21,4 +21,9 @@ export class TimerService {
     await firstValueFrom(this.timerApiService.createTimer(request));
     await this.refresh();
   }
+
+  async cancel(id: string): Promise<void> {
+    await firstValueFrom(this.timerApiService.cancelTimer(id));
+    await this.refresh();
+  }
 }

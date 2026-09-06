@@ -29,4 +29,10 @@ public sealed class InMemoryTimerService(TimeProvider timeProvider) : ITimerServ
 
         return Task.FromResult(timer);
     }
+
+    public Task<bool> CancelAsync(Guid id, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(timers.TryRemove(id, out _));
+    }
 }

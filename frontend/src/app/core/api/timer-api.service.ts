@@ -16,4 +16,8 @@ export class TimerApiService {
   createTimer(request: CreateTimerRequest): Observable<TimerInfo> {
     return this.httpClient.post<TimerInfo>('/api/timers', request);
   }
+
+  cancelTimer(id: string): Observable<void> {
+    return this.httpClient.delete<void>(`/api/timers/${id}`);
+  }
 }

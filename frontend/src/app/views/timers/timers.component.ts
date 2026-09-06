@@ -1,12 +1,11 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { TimerService } from '../../core/services/timer.service';
 
 @Component({
   selector: 'app-timers-view',
   standalone: true,
-  imports: [DatePipe, FormsModule],
+  imports: [DatePipe],
   templateUrl: './timers.component.html',
   styleUrl: './timers.component.css',
 })
@@ -20,6 +19,7 @@ export class TimersComponent implements OnInit, OnDestroy {
   readonly minutes = signal(10);
   readonly seconds = signal(0);
   readonly saving = signal(false);
+  readonly cancelling = signal<string | null>(null);
   readonly error = signal('');
   readonly now = signal(Date.now());
 
@@ -40,6 +40,22 @@ export class TimersComponent implements OnInit, OnDestroy {
     this.hours.set(Math.floor(minutes / 60));
     this.minutes.set(minutes % 60);
     this.seconds.set(0);
+  }
+
+  updateName(event: Event): void {
+    this.name.set((event.target as HTMLInputElement).value);
+  }
+
+  updateHours(event: Event): void {
+    this.hours.set(Number((event.target as HTMLInputElement).value));
+  }
+
+  updateMinutes(event: Event): void {
+    this.minutes.set(Number((event.target as HTMLInputElement).value));
+  }
+
+  updateSeconds(event: Event): void {
+    this.seconds.set(Number((event.target as HTMLInputElement).value));
   }
 
   remainingTime(endsAt: string): string {
@@ -71,6 +87,19 @@ export class TimersComponent implements OnInit, OnDestroy {
       this.error.set('Det gick inte att skapa timern.');
     } finally {
       this.saving.set(false);
+    }
+  }
+
+  async cancelTimer(id: string): Promise<void> {
+    this.cancelling.set(id);
+    this.error.set('');
+
+    try {
+      await this.timerService.cancel(id);
+    } catch {
+      this.error.set('Det gick inte att avbryta timern.');
+    } finally {
+      this.cancelling.set(null);
     }
   }
 

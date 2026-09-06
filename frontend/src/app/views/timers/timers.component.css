@@ -81,6 +81,31 @@ h2 {
   font-variant-numeric: tabular-nums;
 }
 
+.timer-actions {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stop-button {
+  min-height: 2.4rem;
+  padding: 0 0.75rem;
+  border: 1px solid #b76558;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: #ffb4a8;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.stop-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
 .empty-state {
   color: #b6c5c4;
 }

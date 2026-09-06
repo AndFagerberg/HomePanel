@@ -28,4 +28,12 @@ public sealed class TimersController(TimerService timerService) : ControllerBase
             return BadRequest(new { error = exception.Message });
         }
     }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Cancel(Guid id, CancellationToken cancellationToken)
+    {
+        var cancelled = await timerService.CancelAsync(id, cancellationToken);
+
+        return cancelled ? NoContent() : NotFound();
+    }
 }

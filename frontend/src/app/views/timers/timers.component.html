@@ -14,28 +14,37 @@
           <h2>{{ timer.name }}</h2>
           <span>Slut {{ timer.endsAt | date: 'HH:mm' }}</span>
         </div>
-        <strong>{{ remainingTime(timer.endsAt) }}</strong>
+        <div class="timer-actions">
+          <strong>{{ remainingTime(timer.endsAt) }}</strong>
+          <button
+            class="stop-button"
+            type="button"
+            [disabled]="cancelling() === timer.id"
+            (click)="cancelTimer(timer.id)">
+            {{ cancelling() === timer.id ? 'STOPPAR...' : 'STOPPA' }}
+          </button>
+        </div>
       </article>
     } @empty {
       <p class="empty-state">Inga aktiva timers.</p>
     }
   </div>
 
-  <form class="new-timer" (ngSubmit)="createTimer()">
+  <section class="new-timer">
     <div class="form-heading">
       <span class="eyebrow">NY TIMER</span>
-      <button class="start-button" type="submit" [disabled]="saving()">STARTA</button>
+      <button class="start-button" type="button" [disabled]="saving()" (click)="createTimer()">STARTA</button>
     </div>
 
     <label>
       Namn
-      <input [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" maxlength="40" required>
+      <input [value]="name()" (input)="updateName($event)" maxlength="40" required>
     </label>
 
     <div class="duration-fields">
-      <label>Timmar<input type="number" min="0" max="168" [ngModel]="hours()" (ngModelChange)="hours.set(+$event)" name="hours"></label>
-      <label>Minuter<input type="number" min="0" max="59" [ngModel]="minutes()" (ngModelChange)="minutes.set(+$event)" name="minutes"></label>
-      <label>Sekunder<input type="number" min="0" max="59" [ngModel]="seconds()" (ngModelChange)="seconds.set(+$event)" name="seconds"></label>
+      <label>Timmar<input type="number" min="0" max="168" [value]="hours()" (input)="updateHours($event)"></label>
+      <label>Minuter<input type="number" min="0" max="59" [value]="minutes()" (input)="updateMinutes($event)"></label>
+      <label>Sekunder<input type="number" min="0" max="59" [value]="seconds()" (input)="updateSeconds($event)"></label>
     </div>
 
     <div class="presets" aria-label="Snabbtider">
@@ -48,5 +57,5 @@
     @if (error()) {
       <p class="error">{{ error() }}</p>
     }
-  </form>
+  </section>
 </section>

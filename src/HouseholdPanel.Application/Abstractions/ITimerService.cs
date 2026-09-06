@@ -8,4 +8,6 @@ public interface ITimerService
     Task<IReadOnlyList<TimerEntity>> GetActiveAsync(CancellationToken cancellationToken);
 
     Task<TimerEntity> CreateAsync(string name, TimeSpan duration, CancellationToken cancellationToken);
+
+    Task<bool> CancelAsync(Guid id, CancellationToken cancellationToken);
 }

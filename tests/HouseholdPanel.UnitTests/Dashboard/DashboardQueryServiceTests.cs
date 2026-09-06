@@ -96,5 +96,8 @@ public sealed class DashboardQueryServiceTests
             TimeSpan duration,
             CancellationToken cancellationToken) =>
             throw new NotSupportedException();
+
+        public Task<bool> CancelAsync(Guid id, CancellationToken cancellationToken) =>
+            throw new NotSupportedException();
     }
 }
