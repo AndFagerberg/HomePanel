@@ -1,10 +1,36 @@
 <div class="dashboard">
-  @switch (activeView()) {
-    @case ('home') { <app-home-view></app-home-view> }
-    @case ('weather') { <app-weather-view></app-weather-view> }
-    @case ('transport') { <app-transport-view></app-transport-view> }
-    @case ('calendar') { <app-calendar-view></app-calendar-view> }
+  <header class="top-bar">
+    <button class="menu-button" type="button" aria-label="Öppna meny" (click)="toggleMenu()">☰</button>
+    <div class="brand">HOMEPANEL</div>
+    <div class="clock" aria-label="Aktuell tid">
+      <strong>{{ formattedTime() }}</strong>
+      <span>{{ formattedDate() }}</span>
+    </div>
+  </header>
+
+  <main class="main-content">
+    @switch (activeView()) {
+      @case ('home') { <app-home-view (navigate)="selectView($event)"></app-home-view> }
+      @case ('weather') { <app-weather-view></app-weather-view> }
+      @case ('transport') { <app-transport-view></app-transport-view> }
+      @case ('calendar') { <app-calendar-view></app-calendar-view> }
+    }
+  </main>
+
+  @if (menuOpen()) {
+    <button class="menu-backdrop" type="button" aria-label="Stäng meny" (click)="closeMenu()"></button>
+    <nav class="navigation-drawer" aria-label="Huvudmeny">
+      <div class="drawer-heading">HomePanel</div>
+      <button class="nav-item" [class.active]="activeView() === 'home'" type="button" (click)="selectView('home')">⌂ <span>Översikt</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'weather'" type="button" (click)="selectView('weather')">☀ <span>Väder</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'transport'" type="button" (click)="selectView('transport')">🚌 <span>Buss</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'calendar'" type="button" (click)="selectView('calendar')">▣ <span>Kalender</span></button>
+      <button class="nav-item" type="button" disabled>⏱ <span>Timers</span></button>
+      <button class="nav-item" type="button" disabled>♫ <span>Musik</span></button>
+      <button class="nav-item" type="button" disabled>⚙ <span>Inställningar</span></button>
+    </nav>
   }
+
   <div class="status">
     <app-status-indicator [status]="status()"></app-status-indicator>
   </div>

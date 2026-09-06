@@ -8,16 +8,8 @@ import { CalendarComponent } from '../views/calendar/calendar.component';
 
 const REFRESH_INTERVAL_MS = 30_000;
 
-// View rotation order and how long each view stays on screen. See PROJECT.md §13.
 const VIEW_ORDER = ['home', 'weather', 'transport', 'calendar'] as const;
 type ViewName = (typeof VIEW_ORDER)[number];
-const VIEW_DURATIONS_MS: Record<ViewName, number> = {
-  home: 15_000,
-  weather: 10_000,
-  transport: 10_000,
-  calendar: 15_000,
-};
-
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -28,27 +20,51 @@ const VIEW_DURATIONS_MS: Record<ViewName, number> = {
 export class DashboardComponent implements OnInit, OnDestroy {
   private readonly dashboardService = inject(DashboardService);
   private refreshTimer?: ReturnType<typeof setInterval>;
-  private rotationTimer?: ReturnType<typeof setTimeout>;
   private readonly viewIndex = signal(0);
 
   readonly status = this.dashboardService.connectionStatus;
   readonly activeView = computed<ViewName>(() => VIEW_ORDER[this.viewIndex()]);
+  readonly menuOpen = signal(false);
+  readonly now = signal(new Date());
+  private clockTimer?: ReturnType<typeof setInterval>;
 
   ngOnInit(): void {
     this.dashboardService.refresh();
     this.refreshTimer = setInterval(() => this.dashboardService.refresh(), REFRESH_INTERVAL_MS);
-    this.scheduleNextView();
+    this.clockTimer = setInterval(() => this.now.set(new Date()), 30_000);
   }
 
   ngOnDestroy(): void {
     clearInterval(this.refreshTimer);
-    clearTimeout(this.rotationTimer);
+    clearInterval(this.clockTimer);
   }
 
-  private scheduleNextView(): void {
-    this.rotationTimer = setTimeout(() => {
-      this.viewIndex.set((this.viewIndex() + 1) % VIEW_ORDER.length);
-      this.scheduleNextView();
-    }, VIEW_DURATIONS_MS[this.activeView()]);
+  toggleMenu(): void {
+    this.menuOpen.update((isOpen) => !isOpen);
   }
+
+  closeMenu(): void {
+    this.menuOpen.set(false);
+  }
+
+  selectView(view: ViewName): void {
+    this.viewIndex.set(VIEW_ORDER.indexOf(view));
+    this.closeMenu();
+  }
+
+  formattedTime(): string {
+    return new Intl.DateTimeFormat('sv-SE', {
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(this.now());
+  }
+
+  formattedDate(): string {
+    return new Intl.DateTimeFormat('sv-SE', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    }).format(this.now());
+  }
+
 }

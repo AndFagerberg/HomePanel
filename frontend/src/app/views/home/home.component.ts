@@ -1,5 +1,7 @@
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, output } from '@angular/core';
 import { DashboardService } from '../../core/services/dashboard.service';
+
+type HomeNavigationTarget = 'weather' | 'transport' | 'calendar';
 
 @Component({
   selector: 'app-home-view',
@@ -7,26 +9,12 @@ import { DashboardService } from '../../core/services/dashboard.service';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent {
   private readonly dashboardService = inject(DashboardService);
-  private readonly clock = signal(new Date());
-  private clockTimer?: ReturnType<typeof setInterval>;
 
+  readonly navigate = output<HomeNavigationTarget>();
   readonly dashboard = this.dashboardService.data;
-  readonly time = computed(() =>
-    this.clock().toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' }),
-  );
-  readonly date = computed(() =>
-    this.clock().toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'long' }),
-  );
   readonly nextDeparture = computed(() => this.dashboard()?.transport.departures[0] ?? null);
   readonly nextEvent = computed(() => this.dashboard()?.calendar[0] ?? null);
 
-  ngOnInit(): void {
-    this.clockTimer = setInterval(() => this.clock.set(new Date()), 1000);
-  }
-
-  ngOnDestroy(): void {
-    clearInterval(this.clockTimer);
-  }
 }

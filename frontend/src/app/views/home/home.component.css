@@ -1,49 +1,97 @@
 .home-view {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   height: 100%;
-  gap: 0.5rem;
-  text-align: center;
+  padding: 1.5rem 2rem 2rem;
+  box-sizing: border-box;
 }
 
-.clock {
-  font-size: 3.5rem;
-  font-weight: 600;
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  height: 100%;
 }
 
-.date {
-  font-size: 1rem;
-  text-transform: uppercase;
-  opacity: 0.7;
-  letter-spacing: 0.05em;
-}
-
-.temperatures {
+.widget {
   display: flex;
-  gap: 2rem;
-  margin-top: 1rem;
-}
-
-.temperatures .value {
-  display: block;
-  font-size: 2rem;
-  font-weight: 600;
-}
-
-.temperatures .label {
-  display: block;
-  font-size: 0.75rem;
-  opacity: 0.6;
-  text-transform: uppercase;
-}
-
-.info-row {
-  margin-top: 1.5rem;
-  display: flex;
+  min-width: 0;
   flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-  opacity: 0.85;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 1.5rem;
+  border: 1px solid #34434d;
+  border-radius: 0.5rem;
+  background: #1c2932;
+  color: #f4f1e8;
+  font: inherit;
+  text-align: left;
+}
+
+.widget:nth-child(1) {
+  background: #25404a;
+}
+
+.widget:nth-child(2) {
+  background: #263b35;
+}
+
+.widget:nth-child(3) {
+  background: #3a3035;
+}
+
+.widget:nth-child(4),
+.widget:nth-child(5) {
+  justify-content: flex-start;
+  padding-top: 1.25rem;
+}
+
+button.widget {
+  cursor: pointer;
+}
+
+button.widget:active {
+  transform: scale(0.99);
+}
+
+.eyebrow {
+  color: #b6c5c4;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.weather-symbol {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.temperature,
+.large-value {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 700;
+}
+
+.description {
+  color: #d1dcda;
+  font-size: 1rem;
+}
+
+.loading {
+  display: grid;
+  height: 100%;
+  place-items: center;
+  color: #b6c5c4;
+}
+
+@media (max-width: 700px) {
+  .home-view {
+    padding: 1rem;
+  }
+
+  .widget-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    overflow: auto;
+  }
 }

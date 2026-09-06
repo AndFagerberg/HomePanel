@@ -1,28 +1,46 @@
 <div class="home-view">
-  <div class="clock">{{ time() }}</div>
-  <div class="date">{{ date() }}</div>
-
   @if (dashboard(); as d) {
-    <div class="temperatures">
-      <div class="indoor">
-        <span class="value">{{ d.indoor.temperature }}°</span>
-        <span class="label">INNE</span>
-      </div>
-      <div class="outdoor">
-        <span class="value">{{ d.weather.temperature }}°</span>
-        <span class="label">{{ d.weather.symbol }}</span>
-      </div>
-    </div>
+    <section class="widget-grid" aria-label="Översikt">
+      <button class="widget weather-widget" type="button" (click)="navigate.emit('weather')">
+        <span class="eyebrow">VÄDER</span>
+        <span class="weather-symbol">{{ d.weather.symbol }}</span>
+        <span class="temperature">{{ d.weather.temperature }}°</span>
+        <span class="description">{{ d.weather.name }}</span>
+      </button>
 
-    <div class="info-row">
-      @if (nextDeparture(); as departure) {
-        <div class="bus">
-          🚌 {{ departure.departure }} • {{ departure.minutes }} min
-        </div>
-      }
-      @if (nextEvent(); as event) {
-        <div class="event">📅 {{ event.title }} {{ event.start }}</div>
-      }
-    </div>
+      <button class="widget transport-widget" type="button" (click)="navigate.emit('transport')">
+        <span class="eyebrow">🚌 NÄSTA BUSS</span>
+        @if (nextDeparture(); as departure) {
+          <strong class="large-value">{{ departure.departure }}</strong>
+          <span class="description">{{ departure.minutes }} minuter · {{ departure.destination }}</span>
+        } @else {
+          <span class="description">Inga kommande avgångar</span>
+        }
+      </button>
+
+      <button class="widget calendar-widget" type="button" (click)="navigate.emit('calendar')">
+        <span class="eyebrow">📅 IDAG</span>
+        @if (nextEvent(); as event) {
+          <strong class="large-value">{{ event.start }}</strong>
+          <span class="description">{{ event.title }}</span>
+        } @else {
+          <span class="description">Inga kommande aktiviteter</span>
+        }
+      </button>
+
+      <article class="widget timer-widget">
+        <span class="eyebrow">⏱ TIMERS</span>
+        <strong class="large-value">--:--</strong>
+        <span class="description">Inga aktiva timers</span>
+      </article>
+
+      <article class="widget music-widget">
+        <span class="eyebrow">♫ NU SPELAS</span>
+        <strong class="large-value">Ingen musik</strong>
+        <span class="description">Musikspelare kommer senare</span>
+      </article>
+    </section>
+  } @else {
+    <div class="loading">Ansluter till HomePanel...</div>
   }
 </div>

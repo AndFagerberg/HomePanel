@@ -1,10 +1,137 @@
 .dashboard {
   position: relative;
+  display: flex;
+  flex-direction: column;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background: #0b0d10;
-  color: #f4f4f4;
+  background: #111820;
+  color: #f4f1e8;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4.5rem;
+  padding: 0 2rem;
+  background: #17212b;
+  border-bottom: 1px solid #2d3a43;
+}
+
+.menu-button,
+.nav-item {
+  border: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.menu-button {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  background: #e3a857;
+  color: #17212b;
+  font-size: 1.5rem;
+}
+
+.menu-button:active,
+.nav-item:active {
+  transform: scale(0.97);
+}
+
+.brand {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.clock {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-left: auto;
+  color: #d7e0df;
+}
+
+.clock strong {
+  font-size: 1.7rem;
+}
+
+.clock span {
+  color: #9eafb3;
+  text-transform: capitalize;
+}
+
+.main-content {
+  flex: 1;
+  min-height: 0;
+}
+
+.menu-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border: 0;
+  background: rgb(0 0 0 / 45%);
+}
+
+.navigation-drawer {
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 3;
+  display: flex;
+  width: min(22rem, 82vw);
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 2rem 1.25rem;
+  background: #1c2932;
+  box-shadow: 0 0 2rem rgb(0 0 0 / 25%);
+  animation: drawer-in 160ms ease-out;
+}
+
+.drawer-heading {
+  margin: 0.25rem 0 1.25rem;
+  padding: 0 0.75rem;
+  color: #e3a857;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 3.5rem;
+  padding: 0 0.9rem;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #d7e0df;
+  font-size: 1.05rem;
+  text-align: left;
+}
+
+.nav-item.active {
+  background: #e3a857;
+  color: #17212b;
+  font-weight: 700;
+}
+
+.nav-item:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+@keyframes drawer-in {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navigation-drawer { animation: none; }
 }
 
 .status {
