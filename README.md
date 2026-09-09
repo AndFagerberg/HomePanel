@@ -1,32 +1,34 @@
-# Household Panel
+# HomePanel
 
-A digital information panel for the household: an ASP.NET Core backend running on a Linux server, and an Angular frontend displayed in Chromium kiosk mode on a Raspberry Pi Zero 2 W with a 3.5" touchscreen.
+HomePanel är en touchbaserad informationspanel för hemmet. En Linux-server kör ASP.NET Core-API:t och hämtar extern data, medan en Raspberry Pi Zero 2 W visar Angular-frontend i Chromium kiosk mode på en 10,1-tums pekskärm (`1024x600`) ansluten med HDMI och USB.
 
-See [PROJECT.md](PROJECT.md) for the full architecture and design spec, and [.github/copilot-instructions.md](.github/copilot-instructions.md) for the rules Copilot follows in this repo.
+Panelen är avsedd att visa bland annat tid, väder, kollektivtrafik, kalender, schema och timers. Raspberry Pi:n är en tunn klient: den bygger inte frontend och anropar inga externa tjänster.
 
-## Structure
+## Status
+
+Den grundläggande dashboarden är implementerad. Väder hämtas från SMHI och kollektivtrafik från Trafiklab via backendens abstraherade tjänster. Frontend har vyer för startsida, väder och avgångar; kalender, schema, timers och musik utvecklas vidare enligt projektplanen.
+
+## Arkitektur
+
+Backend följer Clean Architecture med beroenden inåt:
 
 ```text
-household-panel/
-├── src/                          # Backend (Clean Architecture)
-│   ├── HouseholdPanel.Domain
-│   ├── HouseholdPanel.Application
-│   ├── HouseholdPanel.Infrastructure
-│   └── HouseholdPanel.Api
-├── tests/
-│   ├── HouseholdPanel.UnitTests
-│   └── HouseholdPanel.IntegrationTests
-├── frontend/                     # Angular standalone app
-├── deploy/                       # Docker & Raspberry Pi kiosk setup
-├── docker-compose.yml
-└── Dockerfile
+src/
+├── HouseholdPanel.Domain/
+├── HouseholdPanel.Application/
+├── HouseholdPanel.Infrastructure/
+└── HouseholdPanel.Api/
+
+frontend/                         # Angular standalone-app
+tests/                            # Enhets- och integrationstester
+deploy/                           # Docker, Linux-server och Raspberry Pi
 ```
 
-## Current status
+All insamling från externa källor sker på servern. API:t exponerar ett presentationsorienterat dashboard-endpoint på `GET /api/dashboard`, som frontend hämtar via servern.
 
-Fas 1 (minimal vertical slice) is implemented: `GET /api/dashboard` returns test data, and the Angular Home view displays it. Weather, transport, calendar and schedule are stubbed behind interfaces (`Application/Abstractions`) ready for Fas 2–4.
+## Lokal utveckling
 
-## Backend
+Kör API:t från repositoryts rot:
 
 ```bash
 dotnet restore
@@ -35,28 +37,32 @@ dotnet test
 dotnet run --project src/HouseholdPanel.Api
 ```
 
-The API listens on `http://localhost:5188` (see `launchSettings.json`) and exposes `GET /api/dashboard`.
-
-## Frontend
+API:t lyssnar normalt på `http://localhost:5188`. Starta sedan Angular-appen i ett separat terminalfönster:
 
 ```bash
 cd frontend
 npm install
-npm start        # ng serve, proxies /api to http://localhost:5188
-npm test
-npm run build     # production build, output in frontend/dist/frontend/browser
+npm start
 ```
 
-## Docker
+Utvecklingsservern finns på `http://localhost:4200` och vidarebefordrar `/api` till API:t. För frontendtester och produktionsbuild används `npm test` respektive `npm run build`.
 
-Builds the Angular app and the API into a single container that serves both:
+## Drift
+
+Docker bygger frontend och API i samma container:
 
 ```bash
 docker compose up -d --build
 ```
 
-Then browse to `http://localhost:8080`.
+Applikationen blir då tillgänglig på `http://localhost:8080`. Raspberry Pi:n ansluter endast till denna adress, eller ett stabilt lokalt hostname för servern, och startar Chromium automatiskt i kiosk mode.
 
-## Raspberry Pi
+## Dokumentation
 
-The Pi is a display-only appliance — it never runs backend logic or builds the frontend. See [deploy/README.md](deploy/README.md).
+- [PROJECT.md](PROJECT.md) - arkitektur, API-kontrakt och implementationsplan.
+- [FRONTEND.md](FRONTEND.md) - GUI-specifikation för den 10,1-tums stora touchpanelen.
+- [frontend/README.md](frontend/README.md) - Angular-kommandon och frontendutveckling.
+- [deploy/README.md](deploy/README.md) - översikt av driftsättning för Linux-server och Raspberry Pi.
+- [deploy/linux-server-no-docker.md](deploy/linux-server-no-docker.md) - installation på Linux-server utan Docker.
+- [deploy/raspberry-pi/SETUP.md](deploy/raspberry-pi/SETUP.md) - stegvis installation av Raspberry Pi med HDMI-bild och USB-touch.
+- [.github/copilot-instructions.md](.github/copilot-instructions.md) - kod- och arkitekturregler för Copilot i repositoryt.

@@ -1,6 +1,6 @@
 # Installation av Raspberry Pi (displayklient)
 
-Denna guide installerar Raspberry Pi Zero 2 W som en dedikerad kioskpanel enligt [PROJECT.md](../../PROJECT.md) sektion 5–6 och 38. Pi:n bygger ingenting och kör ingen backend-logik — den startar bara Chromium mot backendens URL.
+Denna guide installerar Raspberry Pi Zero 2 W som en dedikerad kioskpanel enligt [PROJECT.md](../../PROJECT.md) sektion 5–6 och 38. Pi:n bygger ingenting och kör ingen backend-logik — den startar bara Chromium mot backendens URL på den anslutna 10,1-tums pekskärmen (1024 x 600).
 
 Vi använder **Raspberry Pi OS Lite** (utan skrivbordsmiljö) + en minimal X-server, eftersom det är betydligt lättare för en Zero 2 W än en fullständig desktop.
 
@@ -13,7 +13,11 @@ Vi använder **Raspberry Pi OS Lite** (utan skrivbordsmiljö) + en minimal X-ser
    - Aktivera SSH
    - Användarnamn/lösenord
    - WiFi SSID/lösenord + WiFi-land
-4. Flasha kortet och starta Raspberry Pi.
+4. Anslut skärmen innan första uppstarten:
+  - Anslut skärmens HDMI-kabel till Pi:ns mini-HDMI-port med rätt adapter.
+  - Anslut skärmens USB-kabel till en av Pi:ns USB-portar. Den ger normalt både touch och ström till skärmens touch-kontroller.
+  - Strömförsörj skärmen enligt tillverkarens anvisningar om den har en separat strömanslutning.
+5. Flasha kortet och starta Raspberry Pi.
 
 ## 2. Första uppstart
 
@@ -67,15 +71,20 @@ fi
 EOF
 ```
 
-## 7. Skärm och touch (endast vid behov)
+## 7. Skärm och touch
 
-Många 3,5"-skärmar kräver en tillverkarspecifik drivrutin (t.ex. Waveshare LCD-show) samt rotation. Följ skärmtillverkarens instruktioner och lägg till rotation i `/boot/firmware/config.txt`, t.ex.:
+Den anslutna 10,1-tums skärmen använder HDMI för bild och USB för touch. Ingen GPIO- eller LCD-drivrutin ska installeras. Raspberry Pi OS ska automatiskt upptäcka skärmens native-upplösning, `1024x600`, och USB-touch som en vanlig pekarenhet.
 
-```text
-display_rotate=1
+Kontrollera bildläge och touch efter att `startx` har startat:
+
+```bash
+xrandr --current
+xinput list
 ```
 
-Justera även touch-rotationen med `xinput` om touchpekaren hamnar fel efter skärmrotationen.
+`xrandr` ska visa den HDMI-anslutna skärmen, helst i `1024x600`. `xinput list` ska visa en USB-touch-enhet. Testa sedan att trycka på panelen i Chromium och bekräfta att pekningen följer rätt plats på skärmen.
+
+Om skärmen är svart, kontrollera först HDMI-kabeln, mini-HDMI-adaptern, separat skärmström och att skärmen var ansluten vid uppstart. Lägg bara till en tillverkarspecifik upplösnings- eller rotationsinställning i `/boot/firmware/config.txt` om skärmen inte identifieras korrekt eller ska användas i stående läge. Vid rotering måste både bild och touch roteras tillsammans.
 
 ## 8. Stäng av WiFi-strömsparläge
 
@@ -98,5 +107,7 @@ Raspberry Pi ska nu starta direkt in i Chromium kiosk mode mot dashboarden, och 
 ## Felsökning
 
 - Svart skärm vid boot → kontrollera `journalctl -xe` och att `startx` startar (`echo $DISPLAY` efter manuell `startx`).
+- Ingen bild eller fel upplösning → kontrollera HDMI-kabel, mini-HDMI-adapter och skärmens externa ström. Verifiera sedan ansluten skärm och läge med `xrandr --current`.
+- Touch fungerar inte eller träffar fel → kontrollera USB-kabeln och att touch-enheten visas med `xinput list`. Säkerställ att eventuell rotation har gjorts för både HDMI-bild och touch.
 - Kan inte nå backend → verifiera att servern svarar på `DASHBOARD_URL` från en annan dator på samma nätverk.
 - WiFi tappas → kontrollera `iwconfig wlan0` för `Power Management:off`.
