@@ -19,17 +19,26 @@ public sealed class SmhiWeatherService(HttpClient httpClient) : IWeatherService
         var response = await httpClient.GetFromJsonAsync<SmhiResponse>(requestUri, cancellationToken)
             ?? throw new InvalidOperationException("SMHI returned no forecast data.");
 
+        var stockholmTimeZone = GetStockholmTimeZone();
         var now = DateTimeOffset.UtcNow;
+        var stockholmToday = TimeZoneInfo.ConvertTime(now, stockholmTimeZone).Date;
+        var stockholmTomorrow = stockholmToday.AddDays(1);
         var currentEntry = response.TimeSeries
             .OrderBy(entry => Math.Abs((entry.Time - now).Ticks))
             .First();
 
         var todaysTemperatures = response.TimeSeries
-            .Where(entry => entry.Time.UtcDateTime.Date == now.UtcDateTime.Date)
+            .Where(entry => TimeZoneInfo.ConvertTime(entry.Time, stockholmTimeZone).Date == stockholmToday)
             .Select(entry => entry.Data.Temperature)
             .ToList();
+        var tomorrowEntries = response.TimeSeries
+            .Where(entry => TimeZoneInfo.ConvertTime(entry.Time, stockholmTimeZone).Date == stockholmTomorrow)
+            .ToList();
+        var tomorrowRepresentative = tomorrowEntries
+            .OrderBy(entry => Math.Abs(TimeZoneInfo.ConvertTime(entry.Time, stockholmTimeZone).Hour - 12))
+            .FirstOrDefault();
 
-        return new WeatherForecast(
+        var forecast = new WeatherForecast(
             Temperature: (decimal)currentEntry.Data.Temperature,
             MinimumTemperature: (decimal)(todaysTemperatures.Count > 0 ? todaysTemperatures.Min() : currentEntry.Data.Temperature),
             MaximumTemperature: (decimal)(todaysTemperatures.Count > 0 ? todaysTemperatures.Max() : currentEntry.Data.Temperature),
@@ -37,6 +46,30 @@ public sealed class SmhiWeatherService(HttpClient httpClient) : IWeatherService
             // SMHI doesn't expose a precipitation probability directly; approximate it from expected mean precipitation.
             PrecipitationProbability: Math.Clamp((int)Math.Round(currentEntry.Data.PrecipitationAmountMean * 40), 0, 100),
             WindSpeed: (decimal)currentEntry.Data.WindSpeed);
+
+        if (tomorrowEntries.Count > 0)
+        {
+            forecast = forecast with
+            {
+                TomorrowMinimumTemperature = (decimal)tomorrowEntries.Min(entry => entry.Data.Temperature),
+                TomorrowMaximumTemperature = (decimal)tomorrowEntries.Max(entry => entry.Data.Temperature),
+                TomorrowSymbol = tomorrowRepresentative is null ? null : MapSymbol(tomorrowRepresentative.Data.SymbolCode),
+            };
+        }
+
+        return forecast;
+    }
+
+    private static TimeZoneInfo GetStockholmTimeZone()
+    {
+        try
+        {
+            return TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            return TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+        }
     }
 
     // Maps SMHI's symbol_code weather symbol codes (1-27) to icon keys used by the frontend.

@@ -69,6 +69,25 @@
   min-height: 0;
 }
 
+.overview-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 1rem 2rem 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #52626a;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: #e3a857;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.overview-link:active {
+  transform: scale(0.97);
+}
+
 .menu-backdrop {
   position: absolute;
   inset: 0;

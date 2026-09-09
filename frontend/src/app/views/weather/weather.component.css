@@ -1,67 +1,209 @@
 .weather-view {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  gap: 1rem;
   height: 100%;
-  gap: 0.5rem;
-  text-align: center;
+  box-sizing: border-box;
+  padding: 1rem 2rem 2rem;
+  overflow: auto;
 }
 
 .title {
   font-size: 1rem;
-  text-transform: uppercase;
-  opacity: 0.7;
+  color: #e3a857;
+  font-weight: 700;
   letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.primary {
+  width: min(100%, 38rem);
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem 1.5rem;
+  border: 1px solid #3f565d;
+  border-radius: 0.6rem;
+  background: #1c3239;
+  box-sizing: border-box;
+  text-align: center;
 }
 
 .primary .location {
-  font-size: 0.95rem;
-  opacity: 0.85;
+  margin-top: 0.25rem;
+  color: #d7e0df;
+  font-size: 1.15rem;
+}
+
+.current-weather {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0.75rem 0 0.25rem;
 }
 
 .primary .icon {
-  font-size: 3rem;
+  font-size: 4rem;
   line-height: 1.1;
 }
 
 .primary .temp {
-  font-size: 2.5rem;
-  font-weight: 600;
+  color: #f4f1e8;
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.range-label,
+.detail small {
+  color: #9eafb3;
+  font-size: 0.75rem;
+}
+
+.range-label {
+  margin-top: 0.75rem;
 }
 
 .primary .range {
-  font-size: 0.95rem;
-  opacity: 0.7;
+  margin-top: 0.15rem;
+  color: #d7e0df;
+  font-size: 1.1rem;
 }
 
 .primary .details {
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
-  margin-top: 0.5rem;
-  font-size: 0.95rem;
-  opacity: 0.85;
+  gap: 2rem;
+  margin-top: 1.25rem;
+  color: #f4f1e8;
+}
+
+.detail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.detail-icon {
+  font-size: 1.25rem;
+}
+
+.detail span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.tomorrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(100%, 38rem);
+  min-height: 4.5rem;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  border: 1px solid #34434d;
+  border-radius: 0.5rem;
+  background: #202c32;
+  box-sizing: border-box;
+}
+
+.tomorrow-label {
+  color: #e3a857;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tomorrow-location {
+  margin-top: 0.2rem;
+  color: #9eafb3;
+  font-size: 0.8rem;
+}
+
+.tomorrow-weather {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: #f4f1e8;
+  font-size: 1.25rem;
+}
+
+.tomorrow-icon {
+  font-size: 1.8rem;
 }
 
 .secondary-list {
-  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  width: 100%;
+  width: min(100%, 38rem);
+  margin: 0 auto;
+}
+
+.secondary-heading {
+  margin-bottom: 0.35rem;
+  color: #9eafb3;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .secondary {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  border-bottom: 1px solid #2d3a43;
+  color: #d7e0df;
   font-size: 0.9rem;
-  opacity: 0.8;
 }
 
 .secondary .location {
-  min-width: 4rem;
-  text-align: right;
+  min-width: 5rem;
+  font-weight: 700;
+}
+
+.secondary .icon {
+  font-size: 1.4rem;
+}
+
+.secondary .temp {
+  font-weight: 700;
+}
+
+.secondary .wind {
+  margin-left: auto;
+  color: #9eafb3;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 700px) {
+  .weather-view {
+    padding: 0.75rem 1rem 1.5rem;
+  }
+
+  .primary {
+    padding: 1rem;
+  }
+
+  .primary .icon,
+  .primary .temp {
+    font-size: 3rem;
+  }
+
+  .primary .details {
+    gap: 1rem;
+  }
+
+  .tomorrow-weather {
+    font-size: 1rem;
+  }
+
+  .secondary .wind {
+    display: none;
+  }
 }

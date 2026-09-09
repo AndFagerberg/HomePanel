@@ -1,29 +1,47 @@
 <div class="weather-view">
-  <div class="title">VÄDER</div>
-
   @if (primary(); as w) {
-    <div class="primary">
+    <section class="primary" aria-labelledby="weather-heading">
+      <div class="title" id="weather-heading">VÄDER</div>
       <div class="location">{{ w.name }}</div>
-      <div class="icon">{{ w.symbol | weatherIcon }}</div>
-      <div class="temp">{{ w.temperature }}°</div>
-      <div class="range">{{ w.maximumTemperature }}° / {{ w.minimumTemperature }}°</div>
-      <div class="details">
-        <span>💧 {{ w.precipitationProbability }}%</span>
-        <span>💨 {{ w.windSpeed }} m/s</span>
+      <div class="current-weather">
+        <div class="icon" aria-hidden="true">{{ w.symbol | weatherIcon }}</div>
+        <div class="temp">{{ w.temperature }}°</div>
       </div>
-    </div>
+      <div class="range-label">Dagens temperatur</div>
+      <div class="range">{{ w.minimumTemperature }}° <span aria-hidden="true">–</span> {{ w.maximumTemperature }}°</div>
+      <div class="details">
+        <div class="detail"><span class="detail-icon" aria-hidden="true">💧</span><span><strong>{{ w.precipitationProbability }}%</strong><small>regnrisk</small></span></div>
+        <div class="detail"><span class="detail-icon" aria-hidden="true">💨</span><span><strong>{{ w.windSpeed }} m/s</strong><small>vind</small></span></div>
+      </div>
+    </section>
+
+    @if (w.tomorrowMinimumTemperature !== undefined && w.tomorrowMaximumTemperature !== undefined) {
+      <section class="tomorrow" aria-label="Morgondagens prognos">
+        <div>
+          <div class="tomorrow-label">I morgon</div>
+          <div class="tomorrow-location">{{ w.name }}</div>
+        </div>
+        <div class="tomorrow-weather">
+          @if (w.tomorrowSymbol; as symbol) {
+            <span class="tomorrow-icon" aria-hidden="true">{{ symbol | weatherIcon }}</span>
+          }
+          <strong>{{ w.tomorrowMinimumTemperature }}°–{{ w.tomorrowMaximumTemperature }}°</strong>
+        </div>
+      </section>
+    }
   }
 
   @if (otherLocations().length) {
-    <div class="secondary-list">
+    <section class="secondary-list" aria-label="Väder på andra platser">
+      <div class="secondary-heading">Andra platser</div>
       @for (loc of otherLocations(); track loc.name) {
         <div class="secondary">
           <span class="location">{{ loc.name }}</span>
-          <span class="icon">{{ loc.symbol | weatherIcon }}</span>
+          <span class="icon" aria-hidden="true">{{ loc.symbol | weatherIcon }}</span>
           <span class="temp">{{ loc.temperature }}°</span>
-          <span class="wind">💨 {{ loc.windSpeed }} m/s</span>
+          <span class="wind">{{ loc.minimumTemperature }}°–{{ loc.maximumTemperature }}° <span aria-hidden="true">·</span> {{ loc.windSpeed }} m/s</span>
         </div>
       }
-    </div>
+    </section>
   }
 </div>

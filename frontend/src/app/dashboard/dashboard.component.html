@@ -9,6 +9,13 @@
   </header>
 
   <main class="main-content">
+    @if (activeView() !== 'home') {
+      <button class="overview-link" type="button" (click)="selectView('home')">
+        <span aria-hidden="true">←</span>
+        <span>Översikt</span>
+      </button>
+    }
+
     @switch (activeView()) {
       @case ('home') { <app-home-view (navigate)="selectView($event)"></app-home-view> }
       @case ('weather') { <app-weather-view></app-weather-view> }

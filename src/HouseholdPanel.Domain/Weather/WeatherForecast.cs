@@ -6,4 +6,9 @@ public sealed record WeatherForecast(
     decimal MaximumTemperature,
     string Symbol,
     int PrecipitationProbability,
-    decimal WindSpeed);
+    decimal WindSpeed)
+{
+    public decimal? TomorrowMinimumTemperature { get; init; }
+    public decimal? TomorrowMaximumTemperature { get; init; }
+    public string? TomorrowSymbol { get; init; }
+}

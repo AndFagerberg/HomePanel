@@ -17,6 +17,9 @@ export interface WeatherInfo {
   temperature: number;
   minimumTemperature: number;
   maximumTemperature: number;
+  tomorrowMinimumTemperature?: number;
+  tomorrowMaximumTemperature?: number;
+  tomorrowSymbol?: string;
   symbol: string;
   precipitationProbability: number;
   windSpeed: number;

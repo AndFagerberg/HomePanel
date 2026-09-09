@@ -21,14 +21,20 @@ public sealed class DashboardQueryService(
         foreach (var location in weatherOptions.Value.Locations)
         {
             var forecast = await weatherService.GetCurrentAsync(location, cancellationToken);
-            weatherLocations.Add(new WeatherDto(
+            var weatherDto = new WeatherDto(
                 location.Name,
                 forecast.Temperature,
                 forecast.MinimumTemperature,
                 forecast.MaximumTemperature,
                 forecast.Symbol,
                 forecast.PrecipitationProbability,
-                forecast.WindSpeed));
+                forecast.WindSpeed)
+            {
+                TomorrowMinimumTemperature = forecast.TomorrowMinimumTemperature,
+                TomorrowMaximumTemperature = forecast.TomorrowMaximumTemperature,
+                TomorrowSymbol = forecast.TomorrowSymbol,
+            };
+            weatherLocations.Add(weatherDto);
         }
 
         var indoor = await indoorSensorService.GetCurrentAsync(cancellationToken);

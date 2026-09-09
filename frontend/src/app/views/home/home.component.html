@@ -2,10 +2,13 @@
   @if (dashboard(); as d) {
     <section class="widget-grid" aria-label="Översikt">
       <button class="widget weather-widget" type="button" (click)="navigate.emit('weather')">
-        <span class="eyebrow">VÄDER</span>
-        <span class="weather-symbol">{{ d.weather.symbol }}</span>
-        <span class="temperature">{{ d.weather.temperature }}°</span>
+        <span class="eyebrow"><span aria-hidden="true">☀</span> VÄDER</span>
+        <span class="weather-summary">
+          <span class="weather-symbol" aria-hidden="true">{{ d.weather.symbol | weatherIcon }}</span>
+          <span class="temperature">{{ d.weather.temperature }}°</span>
+        </span>
         <span class="description">{{ d.weather.name }}</span>
+        <span class="weather-meta">{{ d.weather.minimumTemperature }}°–{{ d.weather.maximumTemperature }}° · {{ d.weather.precipitationProbability }}% regn</span>
       </button>
 
       <button class="widget transport-widget" type="button" (click)="navigate.emit('transport')">

@@ -1,11 +1,13 @@
 import { Component, computed, inject, OnDestroy, OnInit, output, signal } from '@angular/core';
 import { DashboardService } from '../../core/services/dashboard.service';
+import { WeatherIconPipe } from '../../shared/pipes/weather-icon.pipe';
 
 type HomeNavigationTarget = 'weather' | 'transport' | 'calendar' | 'timers';
 
 @Component({
   selector: 'app-home-view',
   standalone: true,
+  imports: [WeatherIconPipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
