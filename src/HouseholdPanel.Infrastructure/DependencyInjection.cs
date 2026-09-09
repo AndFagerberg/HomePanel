@@ -20,6 +20,7 @@ public static class DependencyInjection
         services.Configure<TransportOptions>(configuration.GetSection(TransportOptions.SectionName));
         services.Configure<CalendarOptions>(configuration.GetSection(CalendarOptions.SectionName));
         services.Configure<DashboardOptions>(configuration.GetSection(DashboardOptions.SectionName));
+        services.Configure<SecurityOptions>(configuration.GetSection(SecurityOptions.SectionName));
 
         services.AddHttpClient<IWeatherService, SmhiWeatherService>(client =>
         {

@@ -13,6 +13,7 @@ $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $frontendDir = Join-Path $repoRoot "frontend"
 $apiProject = Join-Path $repoRoot "src/HouseholdPanel.Api/HouseholdPanel.Api.csproj"
 $developmentSettings = Join-Path $repoRoot "src/HouseholdPanel.Api/appsettings.Development.json"
+$frontendApiKeyPath = Join-Path $frontendDir "src/app/core/api/api-key.ts"
 $apiWwwroot = Join-Path $repoRoot "src/HouseholdPanel.Api/wwwroot"
 $frontendBuild = Join-Path $frontendDir "dist/frontend/browser"
 $publishRoot = Join-Path $repoRoot "publish"
@@ -45,8 +46,40 @@ function Invoke-Native {
     }
 }
 
+function Get-OrCreateApiKey {
+    param([string]$SettingsPath)
+
+    if (-not (Test-Path -Path $SettingsPath -PathType Leaf)) {
+        throw "Missing $SettingsPath. Create the ignored local Development configuration before deploying."
+    }
+
+    $settings = Get-Content -Raw -Path $SettingsPath | ConvertFrom-Json
+
+    if (-not $settings.PSObject.Properties['Security']) {
+        $settings | Add-Member -MemberType NoteProperty -Name 'Security' -Value ([pscustomobject]@{ ApiKey = '' })
+    }
+
+    if ([string]::IsNullOrWhiteSpace($settings.Security.ApiKey)) {
+        $keyBytes = New-Object byte[] 32
+        [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($keyBytes)
+        $settings.Security.ApiKey = [System.Convert]::ToBase64String($keyBytes) -replace '[/+=]', ''
+        ($settings | ConvertTo-Json -Depth 10) | Set-Content -Path $SettingsPath -Encoding utf8
+        Write-Host "Generated new API key in $SettingsPath"
+    }
+
+    return $settings.Security.ApiKey
+}
+
 Push-Location $repoRoot
 try {
+    Invoke-Step "Ensure API key is configured" {
+        $apiKey = Get-OrCreateApiKey -SettingsPath $developmentSettings
+        Set-Content -Path $frontendApiKeyPath -Encoding utf8 -Value @(
+            "// Local-only file (gitignored). Must match backend appsettings' Security:ApiKey."
+            "export const API_KEY = '$apiKey';"
+        )
+    }
+
     Invoke-Step "Build frontend" {
         Push-Location $frontendDir
         try {

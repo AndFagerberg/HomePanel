@@ -5,6 +5,7 @@ using HouseholdPanel.Application.Configuration;
 using HouseholdPanel.Application.Dashboard;
 using HouseholdPanel.Domain.Weather;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -18,7 +19,13 @@ public sealed class DashboardEndpointTests(WebApplicationFactory<Program> factor
     {
         // Replace the real SMHI-backed weather service so this test doesn't depend on network access.
         var client = factory
-            .WithWebHostBuilder(builder => builder.ConfigureServices(services =>
+            .WithWebHostBuilder(builder => builder
+                .ConfigureAppConfiguration((_, configBuilder) => configBuilder.AddInMemoryCollection(
+                [
+                    // Disables the API key check regardless of any locally configured Security:ApiKey.
+                    new("Security:ApiKey", string.Empty),
+                ]))
+                .ConfigureServices(services =>
             {
                 services.RemoveAll<IWeatherService>();
                 services.AddSingleton<IWeatherService, FakeWeatherService>();

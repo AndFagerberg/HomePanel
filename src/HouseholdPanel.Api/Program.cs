@@ -1,3 +1,4 @@
+using HouseholdPanel.Api.Security;
 using HouseholdPanel.Application;
 using HouseholdPanel.Infrastructure;
 
@@ -34,6 +35,8 @@ app.UseHttpsRedirection();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
+
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.UseAuthorization();
 

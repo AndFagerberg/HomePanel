@@ -20,6 +20,7 @@ npm-debug.log*
 *.env
 appsettings.*.local.json
 appsettings.Development.json
+frontend/src/app/core/api/api-key.ts
 
 # OS
 .DS_Store
