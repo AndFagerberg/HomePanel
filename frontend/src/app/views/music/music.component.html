@@ -1,0 +1,44 @@
+<section class="music-view">
+  <div class="panel radio-panel">
+    <span class="eyebrow">RADIO</span>
+    <div class="station-grid" aria-label="Radiokanaler">
+      @for (station of stations(); track station.id) {
+        <button class="station-button" type="button" [disabled]="playing() === station.id" (click)="playRadio(station.id, station.name)">
+          <span aria-hidden="true">▶</span>
+          <strong>{{ station.name }}</strong>
+        </button>
+      } @empty {
+        <p class="muted">Inga radiokanaler konfigurerade.</p>
+      }
+    </div>
+  </div>
+
+  <div class="panel spotify-panel">
+    <span class="eyebrow">SPOTIFY</span>
+    <div class="search-row">
+      <input type="search" inputmode="search" placeholder="Sök artist, låt eller spellista" [value]="query()" (input)="updateQuery($event)" (keydown.enter)="search()" />
+      <button type="button" [disabled]="loading()" (click)="search()">Sök</button>
+    </div>
+
+    <div class="result-list" aria-label="Spotifyresultat">
+      @for (result of results(); track result.uri) {
+        <button class="result-button" type="button" [disabled]="playing() === result.uri" (click)="playSpotify(result)">
+          <span class="result-type">{{ result.type }}</span>
+          <span class="result-copy">
+            <strong>{{ result.title }}</strong>
+            <span>{{ result.subtitle }}</span>
+          </span>
+          <span aria-hidden="true">▶</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (message()) {
+    <p class="status-message">{{ message() }}</p>
+  }
+
+  @if (error()) {
+    <p class="error-message">{{ error() }}</p>
+  }
+</section>

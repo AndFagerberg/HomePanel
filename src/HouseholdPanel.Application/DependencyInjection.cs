@@ -1,4 +1,5 @@
 using HouseholdPanel.Application.Dashboard;
+using HouseholdPanel.Application.Music;
 using HouseholdPanel.Application.Timers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +10,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IDashboardQueryService, DashboardQueryService>();
+        services.AddScoped<MusicService>();
         services.AddScoped<TimerService>();
 
         return services;

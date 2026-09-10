@@ -22,6 +22,7 @@
       @case ('transport') { <app-transport-view></app-transport-view> }
       @case ('calendar') { <app-calendar-view></app-calendar-view> }
       @case ('timers') { <app-timers-view></app-timers-view> }
+      @case ('music') { <app-music-view></app-music-view> }
     }
   </main>
 
@@ -34,7 +35,7 @@
       <button class="nav-item" [class.active]="activeView() === 'transport'" type="button" (click)="selectView('transport')">🚌 <span>Buss</span></button>
       <button class="nav-item" [class.active]="activeView() === 'calendar'" type="button" (click)="selectView('calendar')">▣ <span>Kalender</span></button>
       <button class="nav-item" [class.active]="activeView() === 'timers'" type="button" (click)="selectView('timers')">⏱ <span>Timers</span></button>
-      <button class="nav-item" type="button" disabled>♫ <span>Musik</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'music'" type="button" (click)="selectView('music')">♫ <span>Musik</span></button>
       <button class="nav-item" type="button" disabled>⚙ <span>Inställningar</span></button>
     </nav>
   }

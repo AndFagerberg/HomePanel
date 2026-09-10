@@ -42,11 +42,11 @@
         }
       </button>
 
-      <article class="widget music-widget">
+      <button class="widget music-widget" type="button" (click)="navigate.emit('music')">
         <span class="eyebrow">♫ NU SPELAS</span>
-        <strong class="large-value">Ingen musik</strong>
-        <span class="description">Musikspelare kommer senare</span>
-      </article>
+        <strong class="large-value">Musik</strong>
+        <span class="description">Sök Spotify eller starta radio</span>
+      </button>
     </section>
   } @else {
     <div class="loading">Ansluter till HomePanel...</div>

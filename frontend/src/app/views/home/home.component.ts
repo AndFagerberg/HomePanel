@@ -2,7 +2,7 @@ import { Component, computed, inject, OnDestroy, OnInit, output, signal } from '
 import { DashboardService } from '../../core/services/dashboard.service';
 import { WeatherIconPipe } from '../../shared/pipes/weather-icon.pipe';
 
-type HomeNavigationTarget = 'weather' | 'transport' | 'calendar' | 'timers';
+type HomeNavigationTarget = 'weather' | 'transport' | 'calendar' | 'timers' | 'music';
 
 @Component({
   selector: 'app-home-view',

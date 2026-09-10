@@ -2,6 +2,7 @@ using HouseholdPanel.Application.Abstractions;
 using HouseholdPanel.Application.Configuration;
 using HouseholdPanel.Infrastructure.Calendar;
 using HouseholdPanel.Infrastructure.Indoor;
+using HouseholdPanel.Infrastructure.Music;
 using HouseholdPanel.Infrastructure.Schedule;
 using HouseholdPanel.Infrastructure.Transport;
 using HouseholdPanel.Infrastructure.Timers;
@@ -20,6 +21,7 @@ public static class DependencyInjection
         services.Configure<TransportOptions>(configuration.GetSection(TransportOptions.SectionName));
         services.Configure<CalendarOptions>(configuration.GetSection(CalendarOptions.SectionName));
         services.Configure<DashboardOptions>(configuration.GetSection(DashboardOptions.SectionName));
+        services.Configure<MusicOptions>(configuration.GetSection(MusicOptions.SectionName));
         services.Configure<SecurityOptions>(configuration.GetSection(SecurityOptions.SectionName));
 
         services.AddHttpClient<IWeatherService, SmhiWeatherService>(client =>
@@ -58,6 +60,10 @@ public static class DependencyInjection
         });
 
         services.AddSingleton<IScheduleService, TestDataScheduleService>();
+        services.AddHttpClient<IMusicService, SpotifyGoogleHomeMusicService>(client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton<ITimerService, InMemoryTimerService>();
 

@@ -4,6 +4,23 @@ Den här varianten passar en svagare Linux-server: bygg Angular och .NET på utv
 
 Servern behöver inte Node.js, npm, Angular CLI, .NET SDK eller Docker. Den behöver bara kunna köra den färdiga ASP.NET Core-appen.
 
+För SR-radio till Google Home behöver servern även ett cast-verktyg. Standardkonfigurationen använder `catt`:
+
+```bash
+sudo apt update
+sudo apt install -y pipx
+pipx install catt
+```
+
+Kontrollera att tjänstens användare kan köra `catt` och att Google Home-enheten syns på samma nätverk:
+
+```bash
+catt devices
+catt -d "Kitchen speaker" cast https://www.sverigesradio.se/topsy/direkt/srapi/164.mp3
+```
+
+Sätt sedan `Music__GoogleHome__DeviceName` till enhetens namn i systemd-tjänsten eller i lokal appkonfiguration.
+
 ## 1. Bygg på utvecklingsmaskinen
 
 Från repo-roten på utvecklingsmaskinen:
@@ -66,6 +83,7 @@ Restart=always
 RestartSec=5
 Environment=ASPNETCORE_ENVIRONMENT=Development
 Environment=ASPNETCORE_URLS=http://0.0.0.0:8080
+Environment=Music__GoogleHome__DeviceName=Kitchen speaker
 
 [Install]
 WantedBy=multi-user.target

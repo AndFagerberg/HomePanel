@@ -6,7 +6,7 @@ Panelen är avsedd att visa bland annat tid, väder, kollektivtrafik, kalender, 
 
 ## Status
 
-Den grundläggande dashboarden är implementerad. Väder hämtas från SMHI och kollektivtrafik från Trafiklab via backendens abstraherade tjänster. Frontend har vyer för startsida, väder och avgångar; kalender, schema, timers och musik utvecklas vidare enligt projektplanen.
+Den grundläggande dashboarden är implementerad. Väder hämtas från SMHI och kollektivtrafik från Trafiklab via backendens abstraherade tjänster. Frontend har vyer för startsida, väder, avgångar, timers och musik; kalender och schema utvecklas vidare enligt projektplanen.
 
 ## Arkitektur
 
@@ -56,6 +56,31 @@ docker compose up -d --build
 ```
 
 Applikationen blir då tillgänglig på `http://localhost:8080`. Raspberry Pi:n ansluter endast till denna adress, eller ett stabilt lokalt hostname för servern, och startar Chromium automatiskt i kiosk mode.
+
+## Musik
+
+Musikstyrningen går via backend på `POST /api/music/...`. Spotify startas med Spotify Web API på den Spotify Connect-enhet som anges i `Music:Spotify:DeviceId`; sätt `ClientId`, `ClientSecret` och `RefreshToken` via environment variables eller lokal konfiguration. Google Home behöver vara synlig som Spotify Connect-enhet för Spotify-spelning.
+
+SR-radio spelas via en direkt MP3-ström från Sveriges Radio och castas från Linux-servern till Google Home med ett konfigurerbart kommando. Standardkonfigurationen använder `catt`:
+
+```json
+"Music": {
+	"Spotify": {
+		"ClientId": "",
+		"ClientSecret": "",
+		"RefreshToken": "",
+		"DeviceId": "",
+		"SearchLimit": 8
+	},
+	"GoogleHome": {
+		"DeviceName": "Kitchen speaker",
+		"CastExecutable": "catt",
+		"CastArguments": ["-d", "{DeviceName}", "cast", "{Url}"]
+	}
+}
+```
+
+Förvalda radiokanaler är P3 och P4 Kronoberg. Fler kanaler kan läggas till i `Music:RadioStations`.
 
 ## Dokumentation
 
