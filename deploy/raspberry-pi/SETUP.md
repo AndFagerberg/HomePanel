@@ -36,12 +36,12 @@ sudo raspi-config
 - **System Options → Boot / Auto Login → Console Autologin**
 - **Localisation Options** → kontrollera att WiFi-land är satt (krävs för att radion ska slås på korrekt)
 
-## 4. Installera minimal X-server, Chromium och verktyg
+## 4. Installera minimal X-server, Chromium, emojitypsnitt och verktyg
 
 ```bash
 sudo apt install --no-install-recommends -y \
   xserver-xorg x11-xserver-utils xinit \
-  chromium-browser unclutter
+  chromium-browser unclutter fonts-noto-color-emoji
 ```
 
 > På nyare Raspberry Pi OS heter paketet/kommandot ibland `chromium` istället för `chromium-browser`. Kontrollera med `command -v chromium || command -v chromium-browser` och justera `kiosk.sh` vid behov.
