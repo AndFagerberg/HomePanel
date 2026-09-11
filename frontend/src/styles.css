@@ -1,10 +1,81 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --color-base: #111820;
+  --color-text: #f4f1e8;
+  --color-ink: #17212b;
+  --color-border-muted: #2d3a43;
+  --color-accent: #e3a857;
+  --color-text-secondary: #d7e0df;
+  --color-text-muted: #9eafb3;
+  --color-border-strong: #52626a;
+  --color-surface: #1c2932;
+  --color-border: #34434d;
+  --color-surface-info: #25404a;
+  --color-surface-success: #263b35;
+  --color-surface-alert: #3a3035;
+  --color-text-soft: #b6c5c4;
+  --color-text-body: #d1dcda;
+  --color-weather-border: #3f565d;
+  --color-weather-surface: #1c3239;
+  --color-surface-alt: #202c32;
+  --color-danger-border: #b76558;
+  --color-danger: #ffb4a8;
+  --color-input-border: #4b5b64;
+}
+
+:root[data-theme='daylight'] {
+  --color-base: #f4f7f5;
+  --color-text: #1d2a30;
+  --color-ink: #ffffff;
+  --color-border-muted: #c2d0d0;
+  --color-accent: #1f7a72;
+  --color-text-secondary: #31474b;
+  --color-text-muted: #60777b;
+  --color-border-strong: #91aaac;
+  --color-surface: #ffffff;
+  --color-border: #c7d6d5;
+  --color-surface-info: #dceae8;
+  --color-surface-success: #e3eee3;
+  --color-surface-alert: #f1e6e9;
+  --color-text-soft: #4a6465;
+  --color-text-body: #34494d;
+  --color-weather-border: #a8c9c7;
+  --color-weather-surface: #e4f1f0;
+  --color-surface-alt: #edf3f3;
+  --color-danger-border: #b75b52;
+  --color-danger: #9d302d;
+  --color-input-border: #91a8a9;
+}
+
+:root[data-theme='warm'] {
+  --color-base: #fff8ec;
+  --color-text: #3c2f21;
+  --color-ink: #ffffff;
+  --color-border-muted: #dfcdb5;
+  --color-accent: #a95331;
+  --color-text-secondary: #584735;
+  --color-text-muted: #806c57;
+  --color-border-strong: #bda98e;
+  --color-surface: #fffdf8;
+  --color-border: #e4d3bd;
+  --color-surface-info: #f2e2c7;
+  --color-surface-success: #e8eedb;
+  --color-surface-alert: #f5e1dc;
+  --color-text-soft: #6e5a45;
+  --color-text-body: #52422f;
+  --color-weather-border: #d7b989;
+  --color-weather-surface: #fff0d5;
+  --color-surface-alt: #f8eee0;
+  --color-danger-border: #b35b4b;
+  --color-danger: #9b362f;
+  --color-input-border: #c9ae8b;
+}
+
 html, body {
   height: 100%;
   margin: 0;
   overflow: hidden;
-  background: #111820;
-  color: #f4f1e8;
+  background: var(--color-base);
+  color: var(--color-text);
   font-family: 'Trebuchet MS', 'Segoe UI', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
   -webkit-user-select: none;
   user-select: none;

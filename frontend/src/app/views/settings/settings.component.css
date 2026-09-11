@@ -1,0 +1,92 @@
+.settings-view {
+  height: 100%;
+  box-sizing: border-box;
+  padding: 1.5rem 2rem 2rem;
+}
+
+.section-heading { margin-bottom: 1.5rem; }
+
+.eyebrow {
+  color: var(--color-text-soft);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+h1, h2, p { margin: 0; }
+
+h1 { margin-top: 0.35rem; font-size: 1.7rem; }
+
+.section-heading p { margin-top: 0.35rem; color: var(--color-text-muted); }
+
+.setting-group {
+  width: min(100%, 42rem);
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+}
+
+h2 { font-size: 1rem; }
+
+.theme-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.theme-option {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.6rem;
+  min-height: 9.5rem;
+  padding: 0.7rem;
+  border: 1px solid var(--color-input-border);
+  border-radius: 0.45rem;
+  background: var(--color-base);
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.theme-option.selected { border: 2px solid var(--color-accent); }
+
+.theme-preview {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: 1fr 0.8fr;
+  gap: 0.2rem;
+  min-height: 4.5rem;
+  padding: 0.35rem;
+  border-radius: 0.25rem;
+}
+
+.theme-preview span:first-child { grid-row: 1 / -1; }
+.theme-preview.dark { background: #111820; }
+.theme-preview.dark span { background: #263b35; }
+.theme-preview.dark span:last-child { background: #e3a857; }
+.theme-preview.daylight { background: #f4f7f5; }
+.theme-preview.daylight span { background: #dceae8; }
+.theme-preview.daylight span:last-child { background: #1f7a72; }
+.theme-preview.warm { background: #fff8ec; }
+.theme-preview.warm span { background: #f2e2c7; }
+.theme-preview.warm span:last-child { background: #a95331; }
+
+.theme-copy { display: flex; flex-direction: column; gap: 0.2rem; }
+
+.theme-copy small { color: var(--color-text-muted); font-size: 0.75rem; line-height: 1.25; }
+
+.selection-mark { width: 1.1rem; height: 1.1rem; border: 1px solid var(--color-input-border); border-radius: 50%; }
+
+.selected .selection-mark { border: 0.35rem solid var(--color-accent); box-sizing: border-box; }
+
+.theme-option:active { transform: scale(0.98); }
+
+@media (max-width: 700px) {
+  .settings-view { padding: 1rem; }
+  .theme-list { grid-template-columns: 1fr; }
+  .theme-option { min-height: 7rem; }
+  .theme-preview { min-height: 3rem; }
+}

@@ -10,7 +10,7 @@
 
 .title {
   font-size: 1rem;
-  color: #e3a857;
+  color: var(--color-accent);
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -20,16 +20,16 @@
   width: min(100%, 38rem);
   margin: 0 auto;
   padding: 1.25rem 1.5rem 1.5rem;
-  border: 1px solid #3f565d;
+  border: 1px solid var(--color-weather-border);
   border-radius: 0.6rem;
-  background: #1c3239;
+  background: var(--color-weather-surface);
   box-sizing: border-box;
   text-align: center;
 }
 
 .primary .location {
   margin-top: 0.25rem;
-  color: #d7e0df;
+  color: var(--color-text-secondary);
   font-size: 1.15rem;
 }
 
@@ -47,7 +47,7 @@
 }
 
 .primary .temp {
-  color: #f4f1e8;
+  color: var(--color-text);
   font-size: 4rem;
   font-weight: 700;
   line-height: 1;
@@ -55,7 +55,7 @@
 
 .range-label,
 .detail small {
-  color: #9eafb3;
+  color: var(--color-text-muted);
   font-size: 0.75rem;
 }
 
@@ -65,7 +65,7 @@
 
 .primary .range {
   margin-top: 0.15rem;
-  color: #d7e0df;
+  color: var(--color-text-secondary);
   font-size: 1.1rem;
 }
 
@@ -74,7 +74,7 @@
   justify-content: center;
   gap: 2rem;
   margin-top: 1.25rem;
-  color: #f4f1e8;
+  color: var(--color-text);
 }
 
 .detail {
@@ -102,14 +102,14 @@
   min-height: 4.5rem;
   margin: 0 auto;
   padding: 0.75rem 1rem;
-  border: 1px solid #34434d;
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
-  background: #202c32;
+  background: var(--color-surface-alt);
   box-sizing: border-box;
 }
 
 .tomorrow-label {
-  color: #e3a857;
+  color: var(--color-accent);
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -118,7 +118,7 @@
 
 .tomorrow-location {
   margin-top: 0.2rem;
-  color: #9eafb3;
+  color: var(--color-text-muted);
   font-size: 0.8rem;
 }
 
@@ -126,7 +126,7 @@
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  color: #f4f1e8;
+  color: var(--color-text);
   font-size: 1.25rem;
 }
 
@@ -144,7 +144,7 @@
 
 .secondary-heading {
   margin-bottom: 0.35rem;
-  color: #9eafb3;
+  color: var(--color-text-muted);
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -157,8 +157,8 @@
   gap: 0.65rem;
   min-height: 2.75rem;
   padding: 0 0.75rem;
-  border-bottom: 1px solid #2d3a43;
-  color: #d7e0df;
+  border-bottom: 1px solid var(--color-border-muted);
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
 }
 
@@ -177,7 +177,7 @@
 
 .secondary .wind {
   margin-left: auto;
-  color: #9eafb3;
+  color: var(--color-text-muted);
   font-size: 0.8rem;
 }
 

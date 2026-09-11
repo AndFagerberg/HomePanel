@@ -22,7 +22,7 @@
 }
 
 .eyebrow {
-  color: #b6c5c4;
+  color: var(--color-text-soft);
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -49,8 +49,8 @@ h2 {
   height: 2.8rem;
   place-items: center;
   border-radius: 50%;
-  background: #e3a857;
-  color: #17212b;
+  background: var(--color-accent);
+  color: var(--color-ink);
   font-weight: 700;
 }
 
@@ -60,19 +60,19 @@ h2 {
   flex-direction: column;
   gap: 0.75rem;
   padding: 1rem;
-  border: 1px solid #34434d;
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
-  background: #1c2932;
+  background: var(--color-surface);
 }
 
 .timer-card {
   padding: 1rem;
   border-radius: 0.4rem;
-  background: #263b35;
+  background: var(--color-surface-success);
 }
 
 .timer-card span {
-  color: #b6c5c4;
+  color: var(--color-text-soft);
   font-size: 0.85rem;
 }
 
@@ -91,10 +91,10 @@ h2 {
 .stop-button {
   min-height: 2.4rem;
   padding: 0 0.75rem;
-  border: 1px solid #b76558;
+  border: 1px solid var(--color-danger-border);
   border-radius: 0.4rem;
   background: transparent;
-  color: #ffb4a8;
+  color: var(--color-danger);
   font: inherit;
   font-size: 0.8rem;
   font-weight: 700;
@@ -107,7 +107,7 @@ h2 {
 }
 
 .empty-state {
-  color: #b6c5c4;
+  color: var(--color-text-soft);
 }
 
 .new-timer {
@@ -118,7 +118,7 @@ label {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  color: #d1dcda;
+  color: var(--color-text-body);
   font-size: 0.85rem;
 }
 
@@ -126,7 +126,7 @@ input,
 .presets button,
 .start-button {
   min-height: 2.8rem;
-  border: 1px solid #4b5b64;
+  border: 1px solid var(--color-input-border);
   border-radius: 0.4rem;
   font: inherit;
 }
@@ -135,8 +135,8 @@ input {
   box-sizing: border-box;
   width: 100%;
   padding: 0 0.75rem;
-  background: #111820;
-  color: #f4f1e8;
+  background: var(--color-base);
+  color: var(--color-text);
 }
 
 .duration-fields {
@@ -153,16 +153,16 @@ input {
 
 .presets button {
   padding: 0.4rem;
-  background: #263b35;
-  color: #f4f1e8;
+  background: var(--color-surface-success);
+  color: var(--color-text);
   cursor: pointer;
 }
 
 .start-button {
   padding: 0 1rem;
   border: 0;
-  background: #e3a857;
-  color: #17212b;
+  background: var(--color-accent);
+  color: var(--color-ink);
   font-weight: 700;
   cursor: pointer;
 }
@@ -177,7 +177,7 @@ button:disabled {
 }
 
 .error {
-  color: #ffb4a8;
+  color: var(--color-danger);
 }
 
 @media (max-width: 700px) {

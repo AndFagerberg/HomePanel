@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { DashboardService } from '../core/services/dashboard.service';
 import { StatusIndicatorComponent } from '../shared/components/status-indicator/status-indicator.component';
 import { HomeComponent } from '../views/home/home.component';
@@ -7,25 +7,25 @@ import { TransportComponent } from '../views/transport/transport.component';
 import { CalendarComponent } from '../views/calendar/calendar.component';
 import { TimersComponent } from '../views/timers/timers.component';
 import { MusicComponent } from '../views/music/music.component';
+import { SettingsComponent } from '../views/settings/settings.component';
 
 const REFRESH_INTERVAL_MS = 30_000;
 
 const VIEW_ORDER = ['home', 'weather', 'transport', 'calendar', 'timers', 'music'] as const;
-type ViewName = (typeof VIEW_ORDER)[number];
+type ViewName = (typeof VIEW_ORDER)[number] | 'settings';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [HomeComponent, WeatherComponent, TransportComponent, CalendarComponent, TimersComponent, MusicComponent, StatusIndicatorComponent],
+  imports: [HomeComponent, WeatherComponent, TransportComponent, CalendarComponent, TimersComponent, MusicComponent, SettingsComponent, StatusIndicatorComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   private readonly dashboardService = inject(DashboardService);
   private refreshTimer?: ReturnType<typeof setInterval>;
-  private readonly viewIndex = signal(0);
 
   readonly status = this.dashboardService.connectionStatus;
-  readonly activeView = computed<ViewName>(() => VIEW_ORDER[this.viewIndex()]);
+  readonly activeView = signal<ViewName>('home');
   readonly menuOpen = signal(false);
   readonly now = signal(new Date());
   private clockTimer?: ReturnType<typeof setInterval>;
@@ -50,7 +50,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   selectView(view: ViewName): void {
-    this.viewIndex.set(VIEW_ORDER.indexOf(view));
+    this.activeView.set(view);
     this.closeMenu();
   }
 

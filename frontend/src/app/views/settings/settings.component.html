@@ -1,0 +1,31 @@
+<section class="settings-view">
+  <div class="section-heading">
+    <span class="eyebrow">INSTÄLLNINGAR</span>
+    <h1>Utseende</h1>
+    <p>Välj ett tema för panelen.</p>
+  </div>
+
+  <section class="setting-group" aria-labelledby="theme-heading">
+    <h2 id="theme-heading">Tema</h2>
+    <div class="theme-list" role="radiogroup" aria-label="Välj tema">
+      @for (theme of themes; track theme.id) {
+        <button
+          class="theme-option"
+          [class.selected]="activeTheme() === theme.id"
+          type="button"
+          role="radio"
+          [attr.aria-checked]="activeTheme() === theme.id"
+          (click)="selectTheme(theme.id)">
+          <span class="theme-preview" [class]="'theme-preview ' + theme.id" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+          <span class="theme-copy">
+            <strong>{{ theme.name }}</strong>
+            <small>{{ theme.description }}</small>
+          </span>
+          <span class="selection-mark" aria-hidden="true"></span>
+        </button>
+      }
+    </div>
+  </section>
+</section>

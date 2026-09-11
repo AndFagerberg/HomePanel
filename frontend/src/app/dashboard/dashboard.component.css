@@ -5,8 +5,8 @@
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background: #111820;
-  color: #f4f1e8;
+  background: var(--color-base);
+  color: var(--color-text);
 }
 
 .top-bar {
@@ -15,8 +15,8 @@
   gap: 1rem;
   min-height: 4.5rem;
   padding: 0 2rem;
-  background: #17212b;
-  border-bottom: 1px solid #2d3a43;
+  background: var(--color-ink);
+  border-bottom: 1px solid var(--color-border-muted);
 }
 
 .menu-button,
@@ -31,8 +31,8 @@
   width: 3rem;
   height: 3rem;
   border-radius: 0.5rem;
-  background: #e3a857;
-  color: #17212b;
+  background: var(--color-accent);
+  color: var(--color-ink);
   font-size: 1.5rem;
 }
 
@@ -52,15 +52,15 @@
   align-items: baseline;
   gap: 0.75rem;
   margin-left: auto;
-  color: #d7e0df;
+  color: var(--color-text-secondary);
 }
 
 .clock strong {
-  font-size: 1.7rem;
+  font-size: 2rem;
 }
 
 .clock span {
-  color: #9eafb3;
+  color: var(--color-text-muted);
   text-transform: capitalize;
 }
 
@@ -75,10 +75,10 @@
   gap: 0.45rem;
   margin: 1rem 2rem 0;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #52626a;
+  border: 1px solid var(--color-border-strong);
   border-radius: 0.4rem;
   background: transparent;
-  color: #e3a857;
+  color: var(--color-accent);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -105,7 +105,7 @@
   flex-direction: column;
   gap: 0.35rem;
   padding: 2rem 1.25rem;
-  background: #1c2932;
+  background: var(--color-surface);
   box-shadow: 0 0 2rem rgb(0 0 0 / 25%);
   animation: drawer-in 160ms ease-out;
 }
@@ -113,7 +113,7 @@
 .drawer-heading {
   margin: 0.25rem 0 1.25rem;
   padding: 0 0.75rem;
-  color: #e3a857;
+  color: var(--color-accent);
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -128,14 +128,14 @@
   padding: 0 0.9rem;
   border-radius: 0.5rem;
   background: transparent;
-  color: #d7e0df;
+  color: var(--color-text-secondary);
   font-size: 1.05rem;
   text-align: left;
 }
 
 .nav-item.active {
-  background: #e3a857;
-  color: #17212b;
+  background: var(--color-accent);
+  color: var(--color-ink);
   font-weight: 700;
 }
 
