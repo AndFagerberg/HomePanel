@@ -47,6 +47,17 @@
         <strong class="large-value">Musik</strong>
         <span class="description">Sök Spotify eller starta radio</span>
       </button>
+
+      <button class="widget news-widget" type="button" (click)="navigate.emit('news')">
+        <span class="eyebrow">▤ SENASTE NYTT</span>
+        <span class="news-headlines">
+          @for (article of latestNews(); track article.url) {
+            <span>{{ article.title }}</span>
+          } @empty {
+            <span class="description">Inga nyheter just nu</span>
+          }
+        </span>
+      </button>
     </section>
   } @else {
     <div class="loading">Ansluter till HomePanel...</div>

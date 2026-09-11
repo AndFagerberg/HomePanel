@@ -41,7 +41,8 @@
 }
 
 .widget:nth-child(4),
-.widget:nth-child(5) {
+.widget:nth-child(5),
+.widget:nth-child(6) {
   justify-content: flex-start;
   padding-top: 1.25rem;
 }
@@ -75,6 +76,21 @@ button.widget:active {
 .description {
   color: var(--color-text-body);
   font-size: 1rem;
+}
+
+.news-headlines {
+  display: grid;
+  width: 100%;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.news-headlines > span:not(.description) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .loading {

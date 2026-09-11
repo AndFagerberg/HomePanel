@@ -9,6 +9,8 @@ export interface Dashboard {
   transport: TransportInfo;
   calendar: CalendarEventInfo[];
   schedule: ScheduleItemInfo[];
+  nationalNews: NewsArticleInfo[];
+  localNews: NewsArticleInfo[];
   timers: TimerInfo[];
 }
 
@@ -50,5 +52,13 @@ export interface CalendarEventInfo {
 export interface ScheduleItemInfo {
   start: string;
   title: string;
+}
+
+export interface NewsArticleInfo {
+  title: string;
+  summary: string;
+  source: string;
+  publishedAt: string;
+  url: string;
 }
 

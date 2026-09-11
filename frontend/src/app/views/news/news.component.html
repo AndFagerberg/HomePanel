@@ -1,0 +1,38 @@
+<section class="news-view">
+  <div class="section-heading">
+    <span class="eyebrow">SVT NYHETER</span>
+    <h1>Senaste nyheterna</h1>
+  </div>
+
+  <div class="news-columns">
+    <section class="news-section" aria-labelledby="local-news-heading">
+      <h2 id="local-news-heading">Småland</h2>
+      <div class="article-list">
+        @for (article of localNews(); track article.url) {
+          <a class="article" [href]="article.url" target="_blank" rel="noopener noreferrer">
+            <span class="article-meta">{{ formattedPublishedAt(article.publishedAt) }} · {{ article.source }}</span>
+            <strong>{{ article.title }}</strong>
+            <span class="article-summary">{{ article.summary }}</span>
+          </a>
+        } @empty {
+          <p class="empty-state">Inga lokala nyheter just nu.</p>
+        }
+      </div>
+    </section>
+
+    <section class="news-section" aria-labelledby="national-news-heading">
+      <h2 id="national-news-heading">Sverige</h2>
+      <div class="article-list">
+        @for (article of nationalNews(); track article.url) {
+          <a class="article" [href]="article.url" target="_blank" rel="noopener noreferrer">
+            <span class="article-meta">{{ formattedPublishedAt(article.publishedAt) }} · {{ article.source }}</span>
+            <strong>{{ article.title }}</strong>
+            <span class="article-summary">{{ article.summary }}</span>
+          </a>
+        } @empty {
+          <p class="empty-state">Inga riksnyheter just nu.</p>
+        }
+      </div>
+    </section>
+  </div>
+</section>

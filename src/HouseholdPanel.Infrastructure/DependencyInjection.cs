@@ -3,6 +3,7 @@ using HouseholdPanel.Application.Configuration;
 using HouseholdPanel.Infrastructure.Calendar;
 using HouseholdPanel.Infrastructure.Indoor;
 using HouseholdPanel.Infrastructure.Music;
+using HouseholdPanel.Infrastructure.News;
 using HouseholdPanel.Infrastructure.Schedule;
 using HouseholdPanel.Infrastructure.Transport;
 using HouseholdPanel.Infrastructure.Timers;
@@ -22,8 +23,10 @@ public static class DependencyInjection
         services.Configure<CalendarOptions>(configuration.GetSection(CalendarOptions.SectionName));
         services.Configure<DashboardOptions>(configuration.GetSection(DashboardOptions.SectionName));
         services.Configure<MusicOptions>(configuration.GetSection(MusicOptions.SectionName));
+        services.Configure<NewsOptions>(configuration.GetSection(NewsOptions.SectionName));
         services.Configure<SecurityOptions>(configuration.GetSection(SecurityOptions.SectionName));
 
+        services.AddMemoryCache();
         services.AddHttpClient<IWeatherService, SmhiWeatherService>(client =>
         {
             client.BaseAddress = new Uri("https://opendata-download-metfcst.smhi.se/");
@@ -60,6 +63,11 @@ public static class DependencyInjection
         });
 
         services.AddSingleton<IScheduleService, TestDataScheduleService>();
+        services.AddHttpClient<INewsService, SvtNewsService>(client =>
+        {
+            client.BaseAddress = new Uri("https://www.svt.se/");
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
         services.AddHttpClient<IMusicService, SpotifyGoogleHomeMusicService>(client =>
         {
             client.Timeout = TimeSpan.FromSeconds(10);

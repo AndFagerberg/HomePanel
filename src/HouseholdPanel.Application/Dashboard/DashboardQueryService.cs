@@ -11,6 +11,7 @@ public sealed class DashboardQueryService(
     ITransportService transportService,
     ICalendarService calendarService,
     IScheduleService scheduleService,
+    INewsService newsService,
     TimerService timerService,
     IOptions<WeatherOptions> weatherOptions,
     IOptions<TransportOptions> transportOptions) : IDashboardQueryService
@@ -41,6 +42,8 @@ public sealed class DashboardQueryService(
         var departures = await transportService.GetDeparturesAsync(cancellationToken);
         var calendarEvents = await calendarService.GetUpcomingEventsAsync(cancellationToken);
         var scheduleItems = await scheduleService.GetUpcomingItemsAsync(cancellationToken);
+        var nationalNews = await newsService.GetNationalAsync(cancellationToken);
+        var localNews = await newsService.GetLocalAsync(cancellationToken);
         var timers = await timerService.GetActiveAsync(cancellationToken);
 
         return new DashboardDto(
@@ -63,6 +66,11 @@ public sealed class DashboardQueryService(
             Schedule: scheduleItems
                 .Select(s => new ScheduleItemDto(s.Start.ToString("HH:mm"), s.Title))
                 .ToList(),
+            NationalNews: nationalNews.Select(MapNewsArticle).ToList(),
+            LocalNews: localNews.Select(MapNewsArticle).ToList(),
             Timers: timers);
     }
+
+    private static NewsArticleDto MapNewsArticle(HouseholdPanel.Domain.News.NewsArticle article) =>
+        new(article.Title, article.Summary, article.Source, article.PublishedAt, article.Url);
 }

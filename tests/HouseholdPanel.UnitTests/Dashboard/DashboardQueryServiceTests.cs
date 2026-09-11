@@ -4,6 +4,7 @@ using HouseholdPanel.Application.Dashboard;
 using HouseholdPanel.Application.Timers;
 using HouseholdPanel.Domain.Calendar;
 using HouseholdPanel.Domain.Indoor;
+using HouseholdPanel.Domain.News;
 using HouseholdPanel.Domain.Schedule;
 using HouseholdPanel.Domain.Transport;
 using HouseholdPanel.Domain.Weather;
@@ -21,6 +22,7 @@ public sealed class DashboardQueryServiceTests
         var transportService = new FakeTransportService();
         var calendarService = new FakeCalendarService();
         var scheduleService = new FakeScheduleService();
+        var newsService = new FakeNewsService();
         var timerService = new TimerService(new FakeTimerService());
         var weatherOptions = Options.Create(new WeatherOptions
         {
@@ -34,6 +36,7 @@ public sealed class DashboardQueryServiceTests
             transportService,
             calendarService,
             scheduleService,
+            newsService,
             timerService,
             weatherOptions,
             transportOptions);
@@ -49,6 +52,8 @@ public sealed class DashboardQueryServiceTests
         Assert.Equal("3", dashboard.Transport.Departures[0].Line);
         Assert.Single(dashboard.Calendar);
         Assert.Empty(dashboard.Schedule);
+        Assert.Single(dashboard.NationalNews);
+        Assert.Single(dashboard.LocalNews);
         Assert.Empty(dashboard.Timers);
     }
 
@@ -84,6 +89,19 @@ public sealed class DashboardQueryServiceTests
     {
         public Task<IReadOnlyList<ScheduleItem>> GetUpcomingItemsAsync(CancellationToken cancellationToken) =>
             Task.FromResult<IReadOnlyList<ScheduleItem>>([]);
+    }
+
+    private sealed class FakeNewsService : INewsService
+    {
+        public Task<IReadOnlyList<NewsArticle>> GetNationalAsync(CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyList<NewsArticle>>([
+                new NewsArticle("Riksnyhet", "Ingress", "SVT Nyheter", DateTimeOffset.Now, "https://www.svt.se/nyheter")
+            ]);
+
+        public Task<IReadOnlyList<NewsArticle>> GetLocalAsync(CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyList<NewsArticle>>([
+                new NewsArticle("Smålandsnyhet", "Ingress", "SVT Nyheter Småland", DateTimeOffset.Now, "https://www.svt.se/nyheter/lokalt/smaland")
+            ]);
     }
 
     private sealed class FakeTimerService : ITimerService

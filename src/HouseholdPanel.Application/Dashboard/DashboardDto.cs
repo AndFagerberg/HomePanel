@@ -11,6 +11,8 @@ public sealed record DashboardDto(
     TransportDto Transport,
     IReadOnlyList<CalendarEventDto> Calendar,
     IReadOnlyList<ScheduleItemDto> Schedule,
+    IReadOnlyList<NewsArticleDto> NationalNews,
+    IReadOnlyList<NewsArticleDto> LocalNews,
     IReadOnlyList<TimerDto> Timers);
 
 public sealed record WeatherDto(
@@ -36,3 +38,10 @@ public sealed record DepartureDto(string Departure, string Destination, string L
 public sealed record CalendarEventDto(string Start, string Title);
 
 public sealed record ScheduleItemDto(string Start, string Title);
+
+public sealed record NewsArticleDto(
+    string Title,
+    string Summary,
+    string Source,
+    DateTimeOffset PublishedAt,
+    string Url);

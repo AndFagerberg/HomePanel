@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using HouseholdPanel.Application.Abstractions;
 using HouseholdPanel.Application.Configuration;
 using HouseholdPanel.Application.Dashboard;
+using HouseholdPanel.Domain.News;
 using HouseholdPanel.Domain.Weather;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,8 @@ public sealed class DashboardEndpointTests(WebApplicationFactory<Program> factor
             {
                 services.RemoveAll<IWeatherService>();
                 services.AddSingleton<IWeatherService, FakeWeatherService>();
+                services.RemoveAll<INewsService>();
+                services.AddSingleton<INewsService, FakeNewsService>();
             }))
             .CreateClient();
 
@@ -47,5 +50,14 @@ public sealed class DashboardEndpointTests(WebApplicationFactory<Program> factor
     {
         public Task<WeatherForecast> GetCurrentAsync(WeatherLocationOptions location, CancellationToken cancellationToken) =>
             Task.FromResult(new WeatherForecast(19.0m, 12.0m, 20.0m, "cloudy", 20, 4.0m));
+    }
+
+    private sealed class FakeNewsService : INewsService
+    {
+        public Task<IReadOnlyList<NewsArticle>> GetNationalAsync(CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyList<NewsArticle>>([]);
+
+        public Task<IReadOnlyList<NewsArticle>> GetLocalAsync(CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyList<NewsArticle>>([]);
     }
 }
