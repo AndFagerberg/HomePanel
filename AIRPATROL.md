@@ -1,78 +1,213 @@
-# HomePanel – AirPatrol integration
+# HomePanel – AirPatrol .NET integration
 
 ## Syfte
 
-Integrera en AirPatrol WiFi-styrd luftvärmepump i HomePanel.
+Implementera native AirPatrol-stöd i HomePanel-backend.
 
-Backend ska kunna läsa:
-- aktuell rumstemperatur
-- luftfuktighet
-- driftläge
-- börtemperatur
-- fläktläge/hastighet när det stöds
-- online/offline-status
-
-Backend ska på sikt kunna styra:
-- på/av
-- driftläge
-- börtemperatur
-- fläktläge/hastighet när det stöds
-
-Raspberry Pi-klienten ska aldrig kommunicera direkt med AirPatrol. All kommunikation ska gå via HomePanel-backend.
+Målet är att läsa och senare styra luftvärmepumpen i stugan via den befintliga AirPatrol WiFi-enheten. Raspberry Pi-klienten ska aldrig kommunicera direkt med AirPatrol; all kommunikation ska ske via HomePanel-backend.
 
 ## Känd hårdvara
 
-Användarens enhet är:
+Den faktiska enheten är:
 
-- AirPatrol WiFi
+- Product: AirPatrol WiFi
 - Hardware: 5.1.0
 - Region: World
-- Serial: 301094
+- Serial number: 301094
 - FCC ID: `2AC7Z-ESP32SMINI1`
 - IC: `21098-ESP32SMINI1`
 
-Enheten är redan konfigurerad och fungerar med den vanliga AirPatrol-appen.
+Enheten är redan konfigurerad och fungerar med den officiella AirPatrol-appen.
 
-## Integration
+## Viktig slutsats
 
-AirPatrol ska integreras via AirPatrols molntjänst. Home Assistants aktuella officiella AirPatrol-integration använder cloud polling och kontoautentisering med samma AirPatrol-apps e-post/lösenord.
+Den aktuella Home Assistant-integrationen är liten och använder ett separat Python-paket, `airpatrol`. Det finns inget behov av att introducera Home Assistant i HomePanel.
 
-Home Assistant dokumenterar stöd för:
-- HVAC-läge, inklusive off/heat/cool där enheten stöder det
-- börtemperatur
-- fläktläge där det stöds
-- aktuell temperatur
-- luftfuktighet
+**Porta i stället det faktiska AirPatrol HTTP-protokollet till native .NET.** Översätt inte Python-koden rad för rad; implementera en ren .NET-client med `HttpClient` och befintliga HomePanel-konventioner.
 
-Integrationen är testad med AirPatrol WiFi v5. Funktionalitet kan skilja beroende på modell och firmware.
+## Referensimplementation
 
-Home Assistant ska inte installeras som en runtime-dependency bara för AirPatrol.
+Använd följande som teknisk referens innan implementationen påbörjas:
 
-## Arkitektur
+- Home Assistant AirPatrol integration: https://github.com/home-assistant/core/tree/dev/homeassistant/components/airpatrol
+- Python AirPatrol client: https://github.com/antondalgren/airpatrol
+- Home Assistant-dokumentation: https://www.home-assistant.io/integrations/airpatrol/
+
+Python-paketet är MIT-licensierat.
+
+## Kända API-servrar och endpoints
+
+Referensimplementationen använder:
 
 ```text
-Raspberry Pi / HomePanel UI
-          |
-          | HTTP/JSON
-          v
-HomePanel Backend
-          |
-          +-- AirPatrolService
-          |
-          | HTTPS / AirPatrol cloud
-          v
-     AirPatrol Cloud
-          |
-          v
-     AirPatrol WiFi
-          |
-          v
-      Luftvärmepump
+Authentication:
+https://auth.apsrvd.io
+
+API:
+https://api.apsrvd.io
 ```
 
-Skapa en isolerad `AirPatrolService` som kapslar in tredjepartsbibliotek, autentisering, API-anrop och AirPatrol-specifika DTO:er.
+Kända endpoints:
 
-## Rekommenderad backend-abstraktion
+```text
+POST https://auth.apsrvd.io/v1/login
+GET  https://auth.apsrvd.io/v1/pairings
+GET  https://api.apsrvd.io/12/command
+POST https://api.apsrvd.io/12/command
+```
+
+Verifiera alltid den aktuella referenskoden innan implementationen låses. Isolera base URLs i client/configuration så att en ändring inte kräver genomgripande kodändringar.
+
+## Authentication
+
+Login sker med AirPatrol-kontots e-postadress och lösenord.
+
+```http
+POST https://auth.apsrvd.io/v1/login
+Content-Type: application/json
+```
+
+Exempel:
+
+```json
+{
+  "email": "user@example.com",
+  "password": "secret"
+}
+```
+
+Referensklienten hämtar bland annat:
+
+```text
+entities.users.list[0].id
+misc.accessToken
+```
+
+Spara access token i minnet där det är praktiskt. Lägg inte tokens i loggar eller repository.
+
+Om ett autentiserat anrop ger 401/403 enligt samma semantik som referensimplementationen ska clienten autentisera om och försöka operationen **en gång** till. Undvik oändliga retry-loopar.
+
+## Device discovery
+
+Efter authentication:
+
+```http
+GET https://auth.apsrvd.io/v1/pairings
+Authorization: Bearer <access-token>
+```
+
+Mappar resultatet till en HomePanel-modell i stället för att sprida AirPatrols råa JSON-struktur genom applikationen.
+
+Exempel:
+
+```csharp
+public sealed record AirPatrolDevice(
+    string Id,
+    string Name,
+    string? Type,
+    string? HardwareId,
+    string? AppId);
+```
+
+Anpassa modellen efter den faktiska response-strukturen.
+
+## Climate/status API
+
+Referensklienten hämtar klimatstatus med:
+
+```http
+GET https://api.apsrvd.io/12/command
+Authorization: Bearer <access-token>
+X-Pairing-Id: <device-id>
+```
+
+Home Assistant använder bland annat dessa AirPatrol-fält:
+
+```text
+RoomTemp
+RoomHumidity
+ParametersData.PumpTemp
+ParametersData.PumpPower
+ParametersData.PumpMode
+ParametersData.FanSpeed
+ParametersData.Swing
+```
+
+Dessa är protokollfält och ska mappas till egna HomePanel-modeller.
+
+Exempel:
+
+```csharp
+public sealed record AirPatrolStatus(
+    string DeviceId,
+    string Name,
+    bool IsOnline,
+    bool IsOn,
+    decimal? CurrentTemperature,
+    decimal? Humidity,
+    decimal? TargetTemperature,
+    AirPatrolMode? Mode,
+    AirPatrolFanMode? FanMode,
+    bool? Swing,
+    DateTimeOffset RetrievedAt);
+```
+
+Använd nullable properties för fält som kan saknas beroende på värmepump eller firmware.
+
+## Control API
+
+Referensimplementationen skickar styrkommandon till:
+
+```http
+POST https://api.apsrvd.io/12/command
+Authorization: Bearer <access-token>
+X-Pairing-Id: <device-id>
+Content-Type: application/json
+```
+
+Request body ska följa **den aktuella Python-referensens exakta JSON-struktur**. Gissa inte strukturen.
+
+Kända kontrollvärden i referensimplementationen inkluderar:
+
+```text
+Power: on / off
+Mode: heat / cool / off
+Fan: auto / min / max
+Swing: on / off
+Temperature: exempelvis "21.000"
+```
+
+Alla värmepumpar behöver inte stödja alla funktioner. Kontrollera capabilities och hantera unsupported operations.
+
+## .NET-arkitektur
+
+Föreslagen struktur:
+
+```text
+HomePanel
+└── Infrastructure
+    └── AirPatrol
+        ├── AirPatrolClient.cs
+        ├── AirPatrolModels.cs
+        ├── AirPatrolOptions.cs
+        └── AirPatrolExceptions.cs
+```
+
+`AirPatrolClient` ansvarar endast för:
+
+- authentication
+- tokenhantering
+- device discovery
+- status requests
+- control commands
+- JSON serialization/deserialization
+- AirPatrol-specifik felhantering
+
+Använd `HttpClient`, async I/O, `CancellationToken` och timeout.
+
+## HomePanel service
+
+Lägg HomePanel-logik bakom en separat service-abstraktion.
 
 Exempel:
 
@@ -91,14 +226,14 @@ public interface IAirPatrolService
         bool on,
         CancellationToken cancellationToken);
 
-    Task SetModeAsync(
-        string deviceId,
-        AirPatrolMode mode,
-        CancellationToken cancellationToken);
-
     Task SetTargetTemperatureAsync(
         string deviceId,
         decimal temperature,
+        CancellationToken cancellationToken);
+
+    Task SetModeAsync(
+        string deviceId,
+        AirPatrolMode mode,
         CancellationToken cancellationToken);
 
     Task SetFanModeAsync(
@@ -108,67 +243,11 @@ public interface IAirPatrolService
 }
 ```
 
-Anpassa namn och signaturer till befintlig HomePanel-arkitektur.
+Anpassa detta till HomePanels befintliga vertical-slice/DI-arkitektur.
 
-## HomePanel-modeller
+## Configuration
 
-Använd egna modeller och exponera inte tredjepartsbibliotekets modeller direkt.
-
-Exempel:
-
-```csharp
-public sealed record AirPatrolStatus(
-    string DeviceId,
-    string Name,
-    bool IsOnline,
-    bool IsOn,
-    decimal? CurrentTemperature,
-    decimal? Humidity,
-    decimal? TargetTemperature,
-    AirPatrolMode? Mode,
-    AirPatrolFanMode? FanMode,
-    DateTimeOffset RetrievedAt);
-```
-
-Exempel på enums:
-
-```csharp
-public enum AirPatrolMode
-{
-    Auto,
-    Heat,
-    Cool,
-    Dry,
-    FanOnly,
-    Off,
-    Unknown
-}
-```
-
-```csharp
-public enum AirPatrolFanMode
-{
-    Auto,
-    Low,
-    Medium,
-    High,
-    Unknown
-}
-```
-
-Alla lägen behöver inte finnas på varje värmepump. Hantera unsupported capabilities dynamiskt.
-
-## Bibliotek och protokoll
-
-Det finns ett Python-bibliotek för AirPatrol som används i Home Assistant-ekosystemet. Innan implementationen låses ska Copilot kontrollera aktuell version och API-yta för biblioteket.
-
-Om HomePanel-backend är .NET bör integrationen följa projektets befintliga teknikval. Om ett Python-bibliotek kräver separat runtime ska detta inte införas utan att först väga det mot en ren HTTP/API-integration eller separat liten integrationsprocess.
-
-Målet är en så liten och robust server-side integration som möjligt.
-
-## Konfiguration
-
-Credentials får aldrig läggas i Git.
+Credentials ska vara server-side secrets.
 
 Exempel:
 
@@ -180,62 +259,51 @@ AirPatrol:
   PollIntervalSeconds: 60
 ```
 
-Alternativt:
+Alternativt environment variables enligt befintliga HomePanel-konventioner.
 
-```text
-AIRPATROL_ENABLED=true
-AIRPATROL_EMAIL=...
-AIRPATROL_PASSWORD=...
-AIRPATROL_POLL_INTERVAL_SECONDS=60
-```
+Aldrig:
 
-Använd HomePanels befintliga konfigurations- och secret-hantering.
-
-Logga aldrig:
-- lösenord
-- access/refresh tokens
-- cookies
-- Authorization-header
-- kompletta autentiserade HTTP-request/response-data
+- credentials i Git
+- credentials i frontend
+- password i loggar
+- access token i loggar
+- Authorization-header i loggar
 
 ## Polling och cache
 
-AirPatrol är en cloud-polling-integration. Gör inte ett cloud-anrop varje gång frontend renderar dashboarden.
+AirPatrol är en cloud-polling-integration. Gör inte ett AirPatrol-anrop varje gång dashboarden renderas.
 
-Rekommenderad modell:
+Föreslagen modell:
 
 ```text
+AirPatrolClient
+      |
+      v
 AirPatrolService
-       |
-       | periodic polling
-       v
-  Cached status
-       |
-       +---- Dashboard API
-       |
-       +---- Detail API
+      |
+      v
+Cached latest status
+      |
+      +---- Dashboard API
+      |
+      +---- Detail API
 ```
 
-Startvärde:
+Startvärde: 60 sekunder, konfigurerbart.
 
-```text
-60 sekunder
-```
+Efter lyckat styrkommando:
 
-Gör intervallet konfigurerbart.
+1. Skicka command.
+2. Kontrollera response.
+3. Invalidera/uppdatera cache.
+4. Hämta status igen när lämpligt.
+5. Returnera aktuell status.
 
-Vid styrning:
-1. skicka kommando
-2. kontrollera lyckat svar
-3. uppdatera eller invalidiera cache
-4. hämta status igen när det är lämpligt
-5. returnera aktuell status till frontend
-
-Frontend ska aldrig själv polla AirPatrol.
+Frontend ska aldrig polla AirPatrol direkt.
 
 ## API
 
-Följ HomePanels befintliga API-konventioner. En möjlig design är:
+Följ HomePanels befintliga API-konventioner. Möjlig design:
 
 ```http
 GET /api/airpatrol
@@ -246,37 +314,11 @@ POST /api/airpatrol/{deviceId}/mode
 POST /api/airpatrol/{deviceId}/fan
 ```
 
-Exempel:
-
-```json
-{
-  "on": true
-}
-```
-
-```json
-{
-  "temperature": 21
-}
-```
-
-```json
-{
-  "mode": "heat"
-}
-```
-
-```json
-{
-  "mode": "auto"
-}
-```
-
-Exakt API-design ska följa resten av HomePanel.
+Exakt endpointdesign ska följa resten av projektet.
 
 ## Capabilities
 
-Backend ska exponera vilka funktioner den aktuella enheten faktiskt stöder.
+Backend ska exponera vilka funktioner som faktiskt stöds.
 
 Exempel:
 
@@ -288,16 +330,17 @@ Exempel:
     "power": true,
     "temperature": true,
     "mode": true,
-    "fan": true
+    "fan": true,
+    "swing": false
   }
 }
 ```
 
 Frontend visar endast relevanta kontroller.
 
-## Dashboard
+## Frontend
 
-Lägg till ett touchvänligt kort, exempelvis:
+Dashboardkortet ska visa exempelvis:
 
 ```text
 ┌─────────────────────────────┐
@@ -311,22 +354,26 @@ Lägg till ett touchvänligt kort, exempelvis:
 └─────────────────────────────┘
 ```
 
-Kortet öppnar en detaljvy med:
+Detaljvyn ska kunna visa och, när stödet finns, styra:
+
 - aktuell temperatur
 - luftfuktighet
-- på/av
+- power
 - driftläge
 - börtemperatur
 - fläktläge
-- +/- temperatur
-- lägesval
-- av/på
+- swing
+- temperatur +/-
+- mode
+- power
 
-## Offline och fel
+UI ska vara touch-first och fungera på HomePanels 1024x600-display.
 
-HomePanel ska fungera även när AirPatrol Cloud är nere.
+## Offline/fel
 
-Visa senast kända värde:
+HomePanel ska fungera även när AirPatrol Cloud är otillgängligt.
+
+Behåll senaste giltiga status och visa timestamp:
 
 ```text
 Stugan
@@ -337,27 +384,29 @@ Senast uppdaterad 09:18
 
 Töm inte hela dashboarden på grund av AirPatrol-fel.
 
-Vid ett styrkommando får frontend inte visa att kommandot lyckades om backend inte fått ett framgångsrikt svar.
+Visa inte ett control command som lyckat om backend inte fått ett framgångsrikt svar.
 
-Hantera:
-- felaktiga credentials
-- autentiseringsfel
-- utgången session/token
+Hantera minst:
+
+- invalid credentials
+- authentication failure
+- expired token
+- 401/403
 - timeout
-- AirPatrol Cloud nere
-- enhet offline
-- okänd device
+- network failure
+- AirPatrol Cloud unavailable
+- device offline
+- unknown device
 - unsupported operation
-- ogiltig temperatur
-- ogiltigt driftläge
+- invalid temperature
+- invalid mode
 - rate limiting
-- oväntat API-svar
-
-Använd timeout och cancellation tokens.
+- unexpected response
 
 ## Loggning
 
-Logga strukturerat:
+Använd strukturerad loggning med exempelvis:
+
 - device ID
 - operation
 - duration
@@ -374,119 +423,167 @@ AirPatrol device offline
 AirPatrol command failed
 ```
 
-Logga aldrig credentials eller tokens.
+Logga aldrig credentials, tokens eller autentiserade payloads.
 
-## Implementationsordning
+## Fas 1 – Read-only proof of concept
 
-Implementera i denna ordning:
+Innan integration med hela HomePanel byggs ska en minimal .NET-testklient eller diagnostic command skapas.
 
-### 1. Read-only proof of concept
+Den ska endast:
 
-Verifiera:
-- autentisering
-- device discovery
-- aktuell temperatur
-- luftfuktighet
-- on/off
-- driftläge
-- börtemperatur
-- fläktläge om tillgängligt
+1. Authenticate.
+2. Lista AirPatrol devices.
+3. Hämta status.
+4. Skriva ut normaliserade värden.
 
-Skicka inga styrkommandon ännu.
+Exempel:
 
-### 2. Backend
+```text
+AirPatrol authentication: OK
 
-Skapa `IAirPatrolService`, implementation, modeller, cache och konfiguration.
+Devices:
+  Stugan
+  ID: xxxxxxxx
 
-### 3. Read API
+Climate:
+  Temperature: 21.4 °C
+  Humidity:    47 %
+  Power:       on
+  Mode:        heat
+  Target:      21.0 °C
+  Fan:         auto
+  Swing:       off
+```
 
-Exponera normaliserad AirPatrol-status via HomePanel.
+**Inga styrkommandon får skickas i fas 1.**
 
-### 4. Frontend
+Syftet är att verifiera den native .NET-portningen mot användarens verkliga AirPatrol WiFi Hardware 5.1.0.
 
-Lägg till dashboardkort och detaljvy.
+## Fas 2 – HomePanel
 
-### 5. Styrning
+När fas 1 fungerar:
 
-Implementera separat och testa:
-1. power
-2. target temperature
-3. mode
-4. fan
+1. Flytta clienten till HomePanel.
+2. Registrera via dependency injection.
+3. Lägg till configuration.
+4. Implementera polling/cache.
+5. Lägg till read-only API.
+6. Lägg till dashboardkort.
+7. Lägg till detaljvy.
+
+## Fas 3 – Styrning
+
+Implementera separat och testa i denna ordning:
+
+1. Power
+2. Target temperature
+3. Operating mode
+4. Fan
+5. Swing om det stöds och behövs
+
+Implementera inte alla kontrollfunktioner samtidigt.
 
 ## Tester
 
-Unit tests ska täcka:
-- mapping till HomePanel-modeller
+### Unit tests
+
+Testa:
+
+- login response deserialization
+- pairing/device mapping
+- status mapping
 - saknade optional fields
-- unsupported capabilities
+- command serialization
+- capabilities
 - authentication errors
-- device offline
+- token refresh
 - timeout
-- lyckat kommando
-- misslyckat kommando
-- ogiltiga värden
+- offline device
+- command failure
+- invalid input
 
-Manuella integrationstester:
-- autentisering
+### Integration/manual tests
+
+Verifiera mot riktig AirPatrol:
+
+- authentication
 - device discovery
-- temperatur
-- luftfuktighet
-- driftläge
-- börtemperatur
-- on/off
-- temperaturändring
+- temperature
+- humidity
+- power state
 - mode
-- fan när det stöds
+- target temperature
+- fan
+- power control
+- temperature change
+- mode change
+- fan change
 
-Kontrollkommandon ska inte köras automatiskt i CI.
+Control tests ska inte köras automatiskt i CI.
 
 ## Copilot-regler
 
-När denna funktion implementeras:
-
-1. Följ befintlig HomePanel-arkitektur.
-2. Isolera all AirPatrol-specifik kod.
-3. Lägg inte till Home Assistant som runtime-dependency.
-4. Kommunicera aldrig med AirPatrol från browsern.
-5. Lägg aldrig AirPatrol credentials i frontend.
-6. Normalisera tredjepartsdata till HomePanel-modeller.
-7. Gör pollingintervallet konfigurerbart.
-8. Cacha senaste giltiga status.
-9. Hantera capabilities dynamiskt.
-10. Hantera offline/cloud-fel utan att slå ut resten av HomePanel.
-11. Rapportera aldrig ett styrkommando som lyckat utan framgångsrikt svar.
-12. Använd async I/O.
-13. Använd cancellation tokens och timeout.
-14. Följ repositoryts befintliga DI- och configuration-konventioner.
-15. Skriv tester innan integrationen byggs ut med fler styrfunktioner.
+1. Inspektera först befintlig HomePanel-arkitektur och följ dess conventions.
+2. Inspektera aktuell Home Assistant AirPatrol-integration och Python-klienten innan protokollet implementeras.
+3. Porta det faktiska HTTP-protokollet, inte bara funktionaliteten.
+4. Introducera inte Home Assistant.
+5. Introducera inte Python om det inte finns ett starkt arkitekturskäl.
+6. Använd native .NET och `HttpClient`.
+7. Isolera AirPatrol-protokollet.
+8. Använd HomePanel-specifika modeller utanför clienten.
+9. Exponera inte tredjeparts-DTO:er genom HomePanel API.
+10. Håll credentials server-side.
+11. Håll access tokens i minnet där det är praktiskt.
+12. Implementera authentication retry en gång vid expired/invalid session.
+13. Undvik oändliga retries.
+14. Använd async I/O, cancellation tokens och timeout.
+15. Cacha status och undvik onödig cloud polling.
+16. Hantera capabilities dynamiskt.
+17. Anta inte att alla HVAC-funktioner stöds.
+18. Rapportera aldrig control success utan framgångsrikt svar.
+19. Skriv tester för serialization/deserialization och felhantering.
+20. Börja med read-only proof of concept.
+21. Ändra inte befintlig HomePanel-funktionalitet i onödan.
+22. Håll implementationen liten och underhållbar.
 
 ## Definition of done
 
-- [ ] AirPatrol authentication fungerar.
-- [ ] AirPatrol device kan hittas.
-- [ ] Temperatur kan läsas.
-- [ ] Luftfuktighet kan läsas.
-- [ ] Power state kan läsas.
-- [ ] Driftläge kan läsas.
-- [ ] Börtemperatur kan läsas.
-- [ ] Fläktläge kan läsas när det stöds.
-- [ ] Dashboard visar status.
-- [ ] Offline/stale state visas korrekt.
-- [ ] Power control fungerar.
-- [ ] Temperaturändring fungerar.
-- [ ] Mode control fungerar.
-- [ ] Fan control fungerar när det stöds.
-- [ ] Credentials finns endast server-side.
-- [ ] Credentials/tokens loggas inte.
-- [ ] Unit tests finns.
-- [ ] HomePanel fungerar även när AirPatrol är otillgängligt.
+### Fas 1
 
-## Källor
+- [ ] Native .NET authentication fungerar.
+- [ ] AirPatrol device discovery fungerar.
+- [ ] Riktig AirPatrol WiFi 5.1.0 identifieras.
+- [ ] Temperatur läses.
+- [ ] Luftfuktighet läses.
+- [ ] Power state läses.
+- [ ] Mode läses.
+- [ ] Target temperature läses.
+- [ ] Fan läses när tillgängligt.
+- [ ] Inga control commands skickas.
 
-- Home Assistant AirPatrol integration:
-  https://www.home-assistant.io/integrations/airpatrol/
-- Home Assistant 2026.1 release notes:
-  https://www.home-assistant.io/blog/2026/01/07/release-20261
-- AirPatrol:
-  https://airpatrol.eu/
+### Full integration
+
+- [ ] `AirPatrolClient` implementerad.
+- [ ] `IAirPatrolService` implementerad.
+- [ ] Configuration implementerad.
+- [ ] Token handling implementerad.
+- [ ] Polling/cache implementerad.
+- [ ] Read API implementerat.
+- [ ] Dashboardkort implementerat.
+- [ ] Detail view implementerad.
+- [ ] Power control implementerad.
+- [ ] Temperature control implementerad.
+- [ ] Mode control implementerad.
+- [ ] Fan control implementerad när stöds.
+- [ ] Swing implementerad när relevant/stöds.
+- [ ] Offline handling implementerad.
+- [ ] Unit tests implementerade.
+- [ ] Credentials/tokens exponeras eller loggas aldrig.
+- [ ] HomePanel fungerar när AirPatrol är otillgängligt.
+
+## Referenser
+
+- Home Assistant AirPatrol integration: https://github.com/home-assistant/core/tree/dev/homeassistant/components/airpatrol
+- Python AirPatrol client: https://github.com/antondalgren/airpatrol
+- Home Assistant AirPatrol documentation: https://www.home-assistant.io/integrations/airpatrol/
+- AirPatrol: https://airpatrol.eu/
