@@ -68,3 +68,15 @@ public sealed record NewsArticleDto(
     string Source,
     DateTimeOffset PublishedAt,
     string Url);
+
+// Section DTOs power the per-domain endpoints polled at different intervals by the frontend.
+public sealed record WeatherSectionDto(WeatherDto Primary, IReadOnlyList<WeatherDto> Locations);
+
+public sealed record CalendarSectionDto(
+    IReadOnlyList<CalendarEventDto> Calendar,
+    IReadOnlyList<ScheduleItemDto> Schedule);
+
+public sealed record NewsSectionDto(
+    IReadOnlyList<NewsArticleDto> NationalNews,
+    IReadOnlyList<NewsArticleDto> LocalNews);
+

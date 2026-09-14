@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MusicSearchResult, PlayRadioRequest, PlaySpotifyRequest, RadioStation } from '../models/music.model';
+import { MusicPlaybackInfo } from '../models/dashboard.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +12,10 @@ export class MusicApiService {
 
   getRadioStations(): Observable<RadioStation[]> {
     return this.httpClient.get<RadioStation[]>('/api/music/radio-stations');
+  }
+
+  getCurrentPlayback(): Observable<MusicPlaybackInfo | null> {
+    return this.httpClient.get<MusicPlaybackInfo | null>('/api/music/spotify/current');
   }
 
   searchSpotify(query: string): Observable<MusicSearchResult[]> {

@@ -2,13 +2,14 @@ import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TimerService } from '../../core/services/timer.service';
 import { OnScreenKeyboardComponent } from '../../shared/components/on-screen-keyboard/on-screen-keyboard.component';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 
 type TimerKeyboardField = 'name' | 'hours' | 'minutes' | 'seconds';
 
 @Component({
   selector: 'app-timers-view',
   standalone: true,
-  imports: [DatePipe, OnScreenKeyboardComponent],
+  imports: [DatePipe, OnScreenKeyboardComponent, IconComponent],
   templateUrl: './timers.component.html',
   styleUrl: './timers.component.css',
 })

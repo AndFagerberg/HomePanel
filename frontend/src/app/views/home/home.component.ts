@@ -3,13 +3,14 @@ import { DashboardService } from '../../core/services/dashboard.service';
 import { MusicService } from '../../core/services/music.service';
 import { NewsArticleInfo } from '../../core/models/dashboard.model';
 import { WeatherIconPipe } from '../../shared/pipes/weather-icon.pipe';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 
 type HomeNavigationTarget = 'weather' | 'cabin' | 'transport' | 'calendar' | 'timers' | 'music' | 'news';
 
 @Component({
   selector: 'app-home-view',
   standalone: true,
-  imports: [WeatherIconPipe],
+  imports: [WeatherIconPipe, IconComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
@@ -48,7 +49,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     try {
       await this.musicService.stopPlayback();
-      await this.dashboardService.refresh();
+      await this.dashboardService.refreshMusic();
     } finally {
       this.stoppingMusic.set(false);
     }

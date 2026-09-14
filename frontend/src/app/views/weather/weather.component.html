@@ -4,14 +4,14 @@
       <div class="title" id="weather-heading">VÄDER</div>
       <div class="location">{{ w.name }}</div>
       <div class="current-weather">
-        <div class="icon" aria-hidden="true">{{ w.symbol | weatherIcon }}</div>
+        <app-icon class="icon" [name]="w.symbol | weatherIcon" />
         <div class="temp">{{ w.temperature }}°</div>
       </div>
       <div class="range-label">Dagens temperatur</div>
       <div class="range">{{ w.minimumTemperature }}° <span aria-hidden="true">–</span> {{ w.maximumTemperature }}°</div>
       <div class="details">
-        <div class="detail"><span class="detail-icon" aria-hidden="true">💧</span><span><strong>{{ w.precipitationProbability }}%</strong><small>regnrisk</small></span></div>
-        <div class="detail"><span class="detail-icon" aria-hidden="true">💨</span><span><strong>{{ w.windSpeed }} m/s</strong><small>vind</small></span></div>
+          <div class="detail"><app-icon class="detail-icon" name="droplet" /><span><strong>{{ w.precipitationProbability }}%</strong><small>regnrisk</small></span></div>
+          <div class="detail"><app-icon class="detail-icon" name="wind" /><span><strong>{{ w.windSpeed }} m/s</strong><small>vind</small></span></div>
       </div>
     </section>
 
@@ -23,7 +23,7 @@
         </div>
         <div class="tomorrow-weather">
           @if (w.tomorrowSymbol; as symbol) {
-            <span class="tomorrow-icon" aria-hidden="true">{{ symbol | weatherIcon }}</span>
+            <app-icon class="tomorrow-icon" [name]="symbol | weatherIcon" />
           }
           <strong>{{ w.tomorrowMinimumTemperature }}°–{{ w.tomorrowMaximumTemperature }}°</strong>
         </div>
@@ -37,7 +37,7 @@
       @for (loc of otherLocations(); track loc.name) {
         <div class="secondary">
           <span class="location">{{ loc.name }}</span>
-          <span class="icon" aria-hidden="true">{{ loc.symbol | weatherIcon }}</span>
+          <app-icon class="icon" [name]="loc.symbol | weatherIcon" />
           <span class="temp">{{ loc.temperature }}°</span>
           <span class="wind">{{ loc.minimumTemperature }}°–{{ loc.maximumTemperature }}° <span aria-hidden="true">·</span> {{ loc.windSpeed }} m/s</span>
         </div>

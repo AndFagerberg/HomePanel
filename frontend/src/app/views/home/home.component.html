@@ -2,9 +2,9 @@
   @if (dashboard(); as d) {
     <section class="widget-grid" aria-label="Översikt">
       <button class="widget weather-widget" type="button" (click)="navigate.emit('weather')">
-        <span class="eyebrow"><span aria-hidden="true">☀</span> VÄDER</span>
+        <span class="eyebrow"><app-icon name="weather-clear" /> VÄDER</span>
         <span class="weather-summary">
-          <span class="weather-symbol" aria-hidden="true">{{ d.weather.symbol | weatherIcon }}</span>
+          <app-icon class="weather-symbol" [name]="d.weather.symbol | weatherIcon" />
           <span class="temperature">{{ d.weather.temperature }}°</span>
         </span>
         <span class="description">{{ d.weather.name }}</span>
@@ -13,7 +13,7 @@
 
       @if (d.airPatrol; as cabin) {
         <button class="widget cabin-widget" type="button" (click)="navigate.emit('cabin')">
-          <span class="eyebrow"><span aria-hidden="true">⌂</span> {{ cabin.name }}</span>
+          <span class="eyebrow"><app-icon name="cabin" /> {{ cabin.name }}</span>
           <strong class="large-value">{{ cabin.temperature }}°</strong>
           <span class="description">
             @if (cabin.humidity !== null) { {{ cabin.humidity }}% luftfuktighet }
@@ -22,7 +22,7 @@
       }
 
       <button class="widget transport-widget" type="button" (click)="navigate.emit('transport')">
-        <span class="eyebrow">🚌 NÄSTA BUSS</span>
+        <span class="eyebrow"><app-icon name="bus" /> NÄSTA BUSS</span>
         @if (nextDeparture(); as departure) {
           <strong class="large-value">{{ departure.departure }}</strong>
           <span class="description">{{ departure.minutes }} minuter · {{ departure.destination }}</span>
@@ -32,7 +32,7 @@
       </button>
 
       <button class="widget calendar-widget" type="button" (click)="navigate.emit('calendar')">
-        <span class="eyebrow">📅 IDAG</span>
+        <span class="eyebrow"><app-icon name="calendar" /> IDAG</span>
         @if (nextEvent(); as event) {
           <strong class="large-value">{{ event.start }}</strong>
           <span class="description">{{ event.title }}</span>
@@ -42,7 +42,7 @@
       </button>
 
       <button class="widget timer-widget" type="button" (click)="navigate.emit('timers')">
-        <span class="eyebrow">⏱ TIMERS</span>
+        <span class="eyebrow"><app-icon name="timer" /> TIMERS</span>
         @if (d.timers.length) {
           <strong class="large-value">{{ d.timers[0].name }}</strong>
           <span class="description">{{ remainingTime(d.timers[0].endsAt) }} kvar · {{ d.timers.length }} aktiv</span>
@@ -53,12 +53,12 @@
       </button>
 
       <section class="widget music-widget" (click)="navigate.emit('music')">
-        <span class="eyebrow">♫ NU SPELAS</span>
+        <span class="eyebrow"><app-icon name="music" /> NU SPELAS</span>
         @if (d.music; as music) {
           <strong class="music-title">{{ music.title }}</strong>
           <span class="description">{{ music.artist }}</span>
           <button class="stop-button" type="button" [disabled]="stoppingMusic()" (click)="stopMusic($event)">
-            ■ Stoppa
+            <app-icon name="stop" /> Stoppa
           </button>
         } @else {
           <strong class="large-value">Ingen musik</strong>
@@ -67,7 +67,7 @@
       </section>
 
       <button class="widget news-widget" type="button" (click)="navigate.emit('news')">
-        <span class="eyebrow">▤ SENASTE NYTT</span>
+        <span class="eyebrow"><app-icon name="news" /> SENASTE NYTT</span>
         <span class="news-headlines">
           @for (article of latestNews(); track article.url) {
             <span>{{ article.title }}</span>
@@ -81,3 +81,4 @@
     <div class="loading">Ansluter till HomePanel...</div>
   }
 </div>
+

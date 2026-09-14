@@ -1,11 +1,12 @@
 import { Component, computed, inject } from '@angular/core';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { WeatherIconPipe } from '../../shared/pipes/weather-icon.pipe';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-weather-view',
   standalone: true,
-  imports: [WeatherIconPipe],
+  imports: [WeatherIconPipe, IconComponent],
   templateUrl: './weather.component.html',
   styleUrl: './weather.component.css',
 })

@@ -15,7 +15,7 @@ See [PROJECT.md](../PROJECT.md) for the full architecture and design spec. These
 11. Use Angular Signals where they simplify state management (see `DashboardService`).
 12. Avoid unnecessary frontend dependencies.
 13. Optimize for the Raspberry Pi Zero 2 W: minimal JS, minimal DOM, no heavy animations or large images.
-14. The GUI is touch-first and designed specifically for a 3.5" screen. No scrollbars.
+14. The GUI is touch-first and designed specifically for a 10.1" 1024×600 screen. No scrollbars.
 15. Keep components small and focused.
 16. Follow SOLID where it adds real value.
 17. Use clear, descriptive names.

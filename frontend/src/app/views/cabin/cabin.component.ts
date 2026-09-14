@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { AirPatrolHistoryPoint } from '../../core/models/dashboard.model';
 import { DashboardService } from '../../core/services/dashboard.service';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 
 interface ChartData {
   temperaturePoints: string;
@@ -17,6 +18,7 @@ interface ChartData {
 @Component({
   selector: 'app-cabin-view',
   standalone: true,
+  imports: [IconComponent],
   templateUrl: './cabin.component.html',
   styleUrl: './cabin.component.css',
 })

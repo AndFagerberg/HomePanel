@@ -92,3 +92,20 @@ export interface NewsArticleInfo {
   url: string;
 }
 
+// Per-domain payloads returned by the granular /api/dashboard/* endpoints (polled at different intervals).
+export interface WeatherSection {
+  primary: WeatherInfo;
+  locations: WeatherInfo[];
+}
+
+export interface CalendarSection {
+  calendar: CalendarEventInfo[];
+  schedule: ScheduleItemInfo[];
+}
+
+export interface NewsSection {
+  nationalNews: NewsArticleInfo[];
+  localNews: NewsArticleInfo[];
+}
+
+

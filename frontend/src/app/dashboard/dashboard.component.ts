@@ -10,21 +10,21 @@ import { MusicComponent } from '../views/music/music.component';
 import { NewsComponent } from '../views/news/news.component';
 import { SettingsComponent } from '../views/settings/settings.component';
 import { CabinComponent } from '../views/cabin/cabin.component';
+import { IconComponent } from '../shared/components/icon/icon.component';
 
-const REFRESH_INTERVAL_MS = 30_000;
+const CLOCK_TICK_MS = 30_000;
 
 const VIEW_ORDER = ['home', 'weather', 'cabin', 'transport', 'calendar', 'timers', 'music'] as const;
 type ViewName = (typeof VIEW_ORDER)[number] | 'news' | 'settings';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [HomeComponent, WeatherComponent, CabinComponent, TransportComponent, CalendarComponent, TimersComponent, MusicComponent, NewsComponent, SettingsComponent, StatusIndicatorComponent],
+  imports: [HomeComponent, WeatherComponent, CabinComponent, TransportComponent, CalendarComponent, TimersComponent, MusicComponent, NewsComponent, SettingsComponent, StatusIndicatorComponent, IconComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   private readonly dashboardService = inject(DashboardService);
-  private refreshTimer?: ReturnType<typeof setInterval>;
 
   readonly status = this.dashboardService.connectionStatus;
   readonly activeView = signal<ViewName>('home');
@@ -33,13 +33,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private clockTimer?: ReturnType<typeof setInterval>;
 
   ngOnInit(): void {
-    this.dashboardService.refresh();
-    this.refreshTimer = setInterval(() => this.dashboardService.refresh(), REFRESH_INTERVAL_MS);
-    this.clockTimer = setInterval(() => this.now.set(new Date()), 30_000);
+    void this.dashboardService.start();
+    this.clockTimer = setInterval(() => this.now.set(new Date()), CLOCK_TICK_MS);
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.refreshTimer);
+    this.dashboardService.stop();
     clearInterval(this.clockTimer);
   }
 

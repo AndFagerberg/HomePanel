@@ -3,7 +3,7 @@
     <section class="climate" aria-labelledby="cabin-heading">
       <div class="title" id="cabin-heading">STUGAN</div>
       <div class="location">{{ cabin.name }}</div>
-      <div class="temperature"><span aria-hidden="true">⌂</span> {{ cabin.temperature }}°</div>
+      <div class="temperature"><app-icon name="cabin" /> {{ cabin.temperature }}°</div>
       <div class="updated">Uppdaterad {{ updatedLabel(cabin.updatedAt) }}</div>
 
       <section class="history" aria-labelledby="history-heading">

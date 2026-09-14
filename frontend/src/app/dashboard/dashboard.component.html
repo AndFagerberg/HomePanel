@@ -1,6 +1,6 @@
 <div class="dashboard">
   <header class="top-bar">
-    <button class="menu-button" type="button" aria-label="Öppna meny" (click)="toggleMenu()">☰</button>
+    <button class="menu-button" type="button" aria-label="Öppna meny" (click)="toggleMenu()"><app-icon name="menu" /></button>
     <div class="brand">HOMEPANEL</div>
     <div class="clock" aria-label="Aktuell tid">
       <strong>{{ formattedTime() }}</strong>
@@ -11,7 +11,7 @@
   <main class="main-content">
     @if (activeView() !== 'home') {
       <button class="overview-link" type="button" (click)="selectView('home')">
-        <span aria-hidden="true">←</span>
+        <app-icon name="back" />
         <span>Översikt</span>
       </button>
     }
@@ -33,15 +33,15 @@
     <button class="menu-backdrop" type="button" aria-label="Stäng meny" (click)="closeMenu()"></button>
     <nav class="navigation-drawer" aria-label="Huvudmeny">
       <div class="drawer-heading">HomePanel</div>
-      <button class="nav-item" [class.active]="activeView() === 'home'" type="button" (click)="selectView('home')">⌂ <span>Översikt</span></button>
-      <button class="nav-item" [class.active]="activeView() === 'weather'" type="button" (click)="selectView('weather')">☀ <span>Väder</span></button>
-      <button class="nav-item" [class.active]="activeView() === 'cabin'" type="button" (click)="selectView('cabin')">⌂ <span>Stugan</span></button>
-      <button class="nav-item" [class.active]="activeView() === 'transport'" type="button" (click)="selectView('transport')">🚌 <span>Buss</span></button>
-      <button class="nav-item" [class.active]="activeView() === 'calendar'" type="button" (click)="selectView('calendar')">▣ <span>Kalender</span></button>
-      <button class="nav-item" [class.active]="activeView() === 'timers'" type="button" (click)="selectView('timers')">⏱ <span>Timers</span></button>
-      <button class="nav-item" [class.active]="activeView() === 'music'" type="button" (click)="selectView('music')">♫ <span>Musik</span></button>
-      <button class="nav-item" [class.active]="activeView() === 'news'" type="button" (click)="selectView('news')">▤ <span>Nyheter</span></button>
-      <button class="nav-item" [class.active]="activeView() === 'settings'" type="button" (click)="selectView('settings')">⚙ <span>Inställningar</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'home'" type="button" (click)="selectView('home')"><app-icon name="home" /> <span>Översikt</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'weather'" type="button" (click)="selectView('weather')"><app-icon name="weather-clear" /> <span>Väder</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'cabin'" type="button" (click)="selectView('cabin')"><app-icon name="cabin" /> <span>Stugan</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'transport'" type="button" (click)="selectView('transport')"><app-icon name="bus" /> <span>Buss</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'calendar'" type="button" (click)="selectView('calendar')"><app-icon name="calendar" /> <span>Kalender</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'timers'" type="button" (click)="selectView('timers')"><app-icon name="timer" /> <span>Timers</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'music'" type="button" (click)="selectView('music')"><app-icon name="music" /> <span>Musik</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'news'" type="button" (click)="selectView('news')"><app-icon name="news" /> <span>Nyheter</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'settings'" type="button" (click)="selectView('settings')"><app-icon name="settings" /> <span>Inställningar</span></button>
     </nav>
   }
 
