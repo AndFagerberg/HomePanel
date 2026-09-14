@@ -183,11 +183,16 @@ public sealed class SpotifyGoogleHomeMusicService(
                 exception);
         }
 
+        var standardOutput = process.StandardOutput.ReadToEndAsync(cancellationToken);
+        var standardError = process.StandardError.ReadToEndAsync(cancellationToken);
         await process.WaitForExitAsync(cancellationToken);
         if (process.ExitCode != 0)
         {
-            var error = await process.StandardError.ReadToEndAsync(cancellationToken);
-            throw new InvalidOperationException($"Google Home cast command failed: {error}");
+            throw new InvalidOperationException(BuildProcessError(
+                "Google Home cast command failed",
+                process.ExitCode,
+                await standardOutput,
+                await standardError));
         }
 
         activeRadioPlayback = new MusicPlayback(station.Name, "Radio", null, null, true);
@@ -232,6 +237,20 @@ public sealed class SpotifyGoogleHomeMusicService(
             var error = await process.StandardError.ReadToEndAsync(cancellationToken);
             throw new InvalidOperationException($"Google Home stop command failed: {error}");
         }
+    }
+
+    private static string BuildProcessError(
+        string message,
+        int exitCode,
+        string standardOutput,
+        string standardError)
+    {
+        var details = string.Join(' ', new[] { standardError.Trim(), standardOutput.Trim() }
+            .Where(output => output.Length > 0));
+
+        return details.Length > 0
+            ? $"{message} (exit code {exitCode}): {details}"
+            : $"{message} (exit code {exitCode}) without any output.";
     }
 
     private static bool IsSpotifyConfigured(SpotifyOptions spotifyOptions) =>

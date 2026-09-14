@@ -38,19 +38,20 @@
 
     <label>
       Namn
-      <input [value]="name()" (input)="updateName($event)" maxlength="40" required>
+      <input inputmode="none" readonly [value]="name()" (click)="activeKeyboardField.set('name')" maxlength="40" required>
     </label>
 
     <div class="duration-fields">
-      <label>Timmar<input type="number" min="0" max="168" [value]="hours()" (input)="updateHours($event)"></label>
-      <label>Minuter<input type="number" min="0" max="59" [value]="minutes()" (input)="updateMinutes($event)"></label>
-      <label>Sekunder<input type="number" min="0" max="59" [value]="seconds()" (input)="updateSeconds($event)"></label>
+      <label>Timmar<input type="number" inputmode="none" readonly min="0" max="168" [value]="hours()" (click)="activeKeyboardField.set('hours')"></label>
+      <label>Minuter<input type="number" inputmode="none" readonly min="0" max="59" [value]="minutes()" (click)="activeKeyboardField.set('minutes')"></label>
+      <label>Sekunder<input type="number" inputmode="none" readonly min="0" max="59" [value]="seconds()" (click)="activeKeyboardField.set('seconds')"></label>
     </div>
 
     <div class="presets" aria-label="Snabbtider">
-      <button type="button" (click)="setPreset('Ägg', 7)">Ägg · 7 min</button>
+      <button type="button" (click)="setPreset('Ungnspankaka', 28)">Ungnspankaka · 28 min</button>
       <button type="button" (click)="setPreset('Pasta', 10)">Pasta · 10 min</button>
       <button type="button" (click)="setPreset('Pizza', 12)">Pizza · 12 min</button>
+      <button type="button" (click)="setPreset('5', 5)"> 5 min</button>
       <button type="button" (click)="setPreset(name(), 30)">30 min</button>
     </div>
 
@@ -58,4 +59,14 @@
       <p class="error">{{ error() }}</p>
     }
   </section>
+
+  @if (activeKeyboardField(); as field) {
+    <app-on-screen-keyboard
+      [value]="keyboardValue()"
+      [mode]="field === 'name' ? 'text' : 'number'"
+      [maxlength]="field === 'name' ? 40 : 3"
+      (valueChange)="setKeyboardValue($event)"
+      (submit)="activeKeyboardField.set(null)"
+      (dismissed)="activeKeyboardField.set(null)" />
+  }
 </section>

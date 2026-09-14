@@ -47,15 +47,19 @@ h2 { font-size: 1rem; }
 
 .article {
   display: flex;
+  width: 100%;
   min-height: 0;
   flex-direction: column;
   justify-content: center;
   gap: 0.18rem;
   padding: 0.45rem 0.55rem;
+  border: 0;
   border-radius: 0.35rem;
   background: var(--color-surface-alt);
   color: inherit;
-  text-decoration: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .article:active { transform: scale(0.99); }
@@ -83,6 +87,65 @@ h2 { font-size: 1rem; }
 }
 
 .empty-state { color: var(--color-text-muted); }
+
+.article-dialog-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  padding: 5.5rem 2rem 2rem;
+  place-items: center;
+  box-sizing: border-box;
+}
+
+.dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgb(0 0 0 / 65%);
+}
+
+.article-dialog {
+  position: relative;
+  display: flex;
+  width: min(100%, 42rem);
+  max-height: 100%;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+  box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 35%);
+  box-sizing: border-box;
+}
+
+.article-dialog h2 {
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+.article-dialog p {
+  overflow: hidden;
+  color: var(--color-text-body);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.close-button {
+  align-self: flex-end;
+  min-width: 8rem;
+  min-height: 3rem;
+  border: 0;
+  border-radius: 0.4rem;
+  background: var(--color-accent);
+  color: var(--color-ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.close-button:active { transform: scale(0.98); }
 
 @media (max-width: 700px) {
   .news-view { padding: 1rem; overflow: auto; }

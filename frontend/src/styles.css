@@ -80,3 +80,17 @@ html, body {
   -webkit-user-select: none;
   user-select: none;
 }
+
+.clock strong,
+.temperature,
+.large-value,
+.timer-count,
+.timer-card strong,
+.departure .time,
+.departure .minutes,
+input[type='number'] {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  letter-spacing: 0;
+}

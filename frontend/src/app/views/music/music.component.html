@@ -16,7 +16,7 @@
   <div class="panel spotify-panel">
     <span class="eyebrow">SPOTIFY</span>
     <div class="search-row">
-      <input type="search" inputmode="search" placeholder="Sök artist, låt eller spellista" [value]="query()" (input)="updateQuery($event)" (keydown.enter)="search()" />
+      <input type="search" inputmode="none" readonly placeholder="Sök artist, låt eller spellista" [value]="query()" (click)="keyboardOpen.set(true)" />
       <button type="button" [disabled]="loading()" (click)="search()">Sök</button>
     </div>
 
@@ -40,5 +40,13 @@
 
   @if (error()) {
     <p class="error-message">{{ error() }}</p>
+  }
+
+  @if (keyboardOpen()) {
+    <app-on-screen-keyboard
+      [value]="query()"
+      (valueChange)="setQuery($event)"
+      (submit)="submitKeyboard()"
+      (dismissed)="keyboardOpen.set(false)" />
   }
 </section>

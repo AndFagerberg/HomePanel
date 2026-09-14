@@ -10,16 +10,18 @@ För SR-radio till Google Home behöver servern även ett cast-verktyg. Standard
 sudo apt update
 sudo apt install -y pipx
 pipx install catt
+command -v catt
 ```
 
 Kontrollera att tjänstens användare kan köra `catt` och att Google Home-enheten syns på samma nätverk:
 
 ```bash
-catt devices
+catt scan
 catt -d "Kitchen speaker" cast https://www.sverigesradio.se/topsy/direkt/srapi/164.mp3
+sudo env PATH="$HOME/.local/bin:$PATH" catt scan
 ```
 
-Sätt sedan `Music__GoogleHome__DeviceName` till enhetens namn i systemd-tjänsten eller i lokal appkonfiguration.
+Sätt sedan `Music__GoogleHome__DeviceName` till enhetens namn i systemd-tjänsten eller i lokal appkonfiguration. När `catt` installeras med `pipx` bör `Music__GoogleHome__CastExecutable` vara den absoluta sökvägen som `command -v catt` visar, vanligtvis `/home/<användare>/.local/bin/catt`.
 
 ## 1. Bygg på utvecklingsmaskinen
 
@@ -99,6 +101,7 @@ Restart=always
 RestartSec=5
 Environment=ASPNETCORE_ENVIRONMENT=Production
 Environment=ASPNETCORE_URLS=http://0.0.0.0:8080
+Environment=PATH=/home/andy/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 EnvironmentFile=-/etc/homepanel/homepanel.env
 
 [Install]

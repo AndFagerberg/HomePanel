@@ -2,10 +2,12 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MusicSearchResult } from '../../core/models/music.model';
 import { MusicService } from '../../core/services/music.service';
+import { OnScreenKeyboardComponent } from '../../shared/components/on-screen-keyboard/on-screen-keyboard.component';
 
 @Component({
   selector: 'app-music-view',
   standalone: true,
+  imports: [OnScreenKeyboardComponent],
   templateUrl: './music.component.html',
   styleUrl: './music.component.css',
 })
@@ -19,13 +21,19 @@ export class MusicComponent implements OnInit {
   readonly playing = signal('');
   readonly message = signal('');
   readonly error = signal('');
+  readonly keyboardOpen = signal(false);
 
   ngOnInit(): void {
     void this.loadStations();
   }
 
-  updateQuery(event: Event): void {
-    this.query.set((event.target as HTMLInputElement).value);
+  setQuery(value: string): void {
+    this.query.set(value);
+  }
+
+  async submitKeyboard(): Promise<void> {
+    this.keyboardOpen.set(false);
+    await this.search();
   }
 
   async search(): Promise<void> {

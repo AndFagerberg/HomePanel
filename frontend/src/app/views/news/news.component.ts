@@ -1,4 +1,5 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { NewsArticleInfo } from '../../core/models/dashboard.model';
 import { DashboardService } from '../../core/services/dashboard.service';
 
 @Component({
@@ -12,6 +13,15 @@ export class NewsComponent {
 
   readonly nationalNews = computed(() => this.dashboardService.data()?.nationalNews ?? []);
   readonly localNews = computed(() => this.dashboardService.data()?.localNews ?? []);
+  readonly selectedArticle = signal<NewsArticleInfo | null>(null);
+
+  openArticle(article: NewsArticleInfo): void {
+    this.selectedArticle.set(article);
+  }
+
+  closeArticle(): void {
+    this.selectedArticle.set(null);
+  }
 
   formattedPublishedAt(publishedAt: string): string {
     return new Intl.DateTimeFormat('sv-SE', {

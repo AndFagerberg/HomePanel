@@ -1,0 +1,38 @@
+<div class="keyboard-layer" role="dialog" aria-modal="true" aria-label="Skärmtangentbord">
+  <button class="keyboard-backdrop" type="button" aria-label="Stäng tangentbord" (click)="dismissed.emit()"></button>
+  <section class="keyboard">
+    <div class="keyboard-value" aria-live="polite">{{ value() || 'Skriv här' }}</div>
+
+    @if (mode() === 'text') {
+      @for (row of letterRows; track $index) {
+        <div class="key-row">
+          @for (key of row; track key) {
+            <button class="key" type="button" (click)="append(key)">{{ keyLabel(key) }}</button>
+          }
+        </div>
+      }
+      <div class="key-row actions">
+        <button class="key action-key" type="button" [class.active]="uppercase()" (click)="uppercase.update(value => !value)">Skift</button>
+        <button class="key space-key" type="button" (click)="addSpace()">Mellanslag</button>
+        <button class="key action-key" type="button" (click)="backspace()" aria-label="Radera senaste tecknet">⌫</button>
+      </div>
+    } @else {
+      @for (row of numberRows; track $index) {
+        <div class="key-row number-row">
+          @for (key of row; track key) {
+            <button class="key" type="button" (click)="append(key)">{{ key }}</button>
+          }
+        </div>
+      }
+      <div class="key-row actions number-actions">
+        <button class="key action-key" type="button" (click)="clear()">Rensa</button>
+        <button class="key action-key" type="button" (click)="backspace()" aria-label="Radera senaste siffran">⌫</button>
+      </div>
+    }
+
+    <div class="key-row footer-row">
+      <button class="cancel-key" type="button" (click)="dismissed.emit()">Stäng</button>
+      <button class="done-key" type="button" (click)="submit.emit()">Klar</button>
+    </div>
+  </section>
+</div>

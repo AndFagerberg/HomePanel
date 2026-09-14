@@ -1,11 +1,14 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TimerService } from '../../core/services/timer.service';
+import { OnScreenKeyboardComponent } from '../../shared/components/on-screen-keyboard/on-screen-keyboard.component';
+
+type TimerKeyboardField = 'name' | 'hours' | 'minutes' | 'seconds';
 
 @Component({
   selector: 'app-timers-view',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, OnScreenKeyboardComponent],
   templateUrl: './timers.component.html',
   styleUrl: './timers.component.css',
 })
@@ -22,6 +25,7 @@ export class TimersComponent implements OnInit, OnDestroy {
   readonly cancelling = signal<string | null>(null);
   readonly error = signal('');
   readonly now = signal(Date.now());
+  readonly activeKeyboardField = signal<TimerKeyboardField | null>(null);
 
   ngOnInit(): void {
     void this.refresh();
@@ -42,20 +46,32 @@ export class TimersComponent implements OnInit, OnDestroy {
     this.seconds.set(0);
   }
 
-  updateName(event: Event): void {
-    this.name.set((event.target as HTMLInputElement).value);
+  keyboardValue(): string {
+    switch (this.activeKeyboardField()) {
+      case 'name': return this.name();
+      case 'hours': return this.hours().toString();
+      case 'minutes': return this.minutes().toString();
+      case 'seconds': return this.seconds().toString();
+      default: return '';
+    }
   }
 
-  updateHours(event: Event): void {
-    this.hours.set(Number((event.target as HTMLInputElement).value));
-  }
-
-  updateMinutes(event: Event): void {
-    this.minutes.set(Number((event.target as HTMLInputElement).value));
-  }
-
-  updateSeconds(event: Event): void {
-    this.seconds.set(Number((event.target as HTMLInputElement).value));
+  setKeyboardValue(value: string): void {
+    const numericValue = Number(value || 0);
+    switch (this.activeKeyboardField()) {
+      case 'name':
+        this.name.set(value);
+        break;
+      case 'hours':
+        this.hours.set(Math.min(168, numericValue));
+        break;
+      case 'minutes':
+        this.minutes.set(Math.min(59, numericValue));
+        break;
+      case 'seconds':
+        this.seconds.set(Math.min(59, numericValue));
+        break;
+    }
   }
 
   remainingTime(endsAt: string): string {

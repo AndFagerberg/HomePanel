@@ -9,11 +9,11 @@
       <h2 id="local-news-heading">Småland</h2>
       <div class="article-list">
         @for (article of localNews(); track article.url) {
-          <a class="article" [href]="article.url" target="_blank" rel="noopener noreferrer">
+          <button class="article" type="button" (click)="openArticle(article)">
             <span class="article-meta">{{ formattedPublishedAt(article.publishedAt) }} · {{ article.source }}</span>
             <strong>{{ article.title }}</strong>
             <span class="article-summary">{{ article.summary }}</span>
-          </a>
+          </button>
         } @empty {
           <p class="empty-state">Inga lokala nyheter just nu.</p>
         }
@@ -24,15 +24,27 @@
       <h2 id="national-news-heading">Sverige</h2>
       <div class="article-list">
         @for (article of nationalNews(); track article.url) {
-          <a class="article" [href]="article.url" target="_blank" rel="noopener noreferrer">
+          <button class="article" type="button" (click)="openArticle(article)">
             <span class="article-meta">{{ formattedPublishedAt(article.publishedAt) }} · {{ article.source }}</span>
             <strong>{{ article.title }}</strong>
             <span class="article-summary">{{ article.summary }}</span>
-          </a>
+          </button>
         } @empty {
           <p class="empty-state">Inga riksnyheter just nu.</p>
         }
       </div>
     </section>
   </div>
+
+  @if (selectedArticle(); as article) {
+    <div class="article-dialog-layer" role="dialog" aria-modal="true" aria-labelledby="article-dialog-title">
+      <button class="dialog-backdrop" type="button" aria-label="Stäng nyheten" (click)="closeArticle()"></button>
+      <article class="article-dialog">
+        <span class="article-meta">{{ formattedPublishedAt(article.publishedAt) }} · {{ article.source }}</span>
+        <h2 id="article-dialog-title">{{ article.title }}</h2>
+        <p>{{ article.summary }}</p>
+        <button class="close-button" type="button" (click)="closeArticle()">Stäng</button>
+      </article>
+    </div>
+  }
 </section>

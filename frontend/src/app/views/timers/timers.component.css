@@ -137,6 +137,7 @@ input {
   padding: 0 0.75rem;
   background: var(--color-base);
   color: var(--color-text);
+  cursor: pointer;
 }
 
 .duration-fields {
