@@ -1,5 +1,6 @@
 using HouseholdPanel.Application.Abstractions;
 using HouseholdPanel.Application.Configuration;
+using HouseholdPanel.Infrastructure.AirPatrol;
 using HouseholdPanel.Infrastructure.Calendar;
 using HouseholdPanel.Infrastructure.Indoor;
 using HouseholdPanel.Infrastructure.Music;
@@ -25,6 +26,8 @@ public static class DependencyInjection
         services.Configure<MusicOptions>(configuration.GetSection(MusicOptions.SectionName));
         services.Configure<NewsOptions>(configuration.GetSection(NewsOptions.SectionName));
         services.Configure<SecurityOptions>(configuration.GetSection(SecurityOptions.SectionName));
+        services.Configure<AirPatrolOptions>(configuration.GetSection(AirPatrolOptions.SectionName));
+        services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.SectionName));
 
         services.AddMemoryCache();
         services.AddHttpClient<IWeatherService, SmhiWeatherService>(client =>
@@ -72,6 +75,14 @@ public static class DependencyInjection
         {
             client.Timeout = TimeSpan.FromSeconds(10);
         });
+        services.AddHttpClient<AirPatrolService>(client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
+        services.AddSingleton<IAirPatrolHistoryRepository, SqliteAirPatrolHistoryRepository>();
+        services.AddSingleton<IAirPatrolService>(serviceProvider =>
+            serviceProvider.GetRequiredService<AirPatrolService>());
+        services.AddHostedService<AirPatrolPollingService>();
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton<ITimerService, InMemoryTimerService>();
 

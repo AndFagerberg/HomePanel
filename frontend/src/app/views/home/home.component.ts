@@ -3,7 +3,7 @@ import { DashboardService } from '../../core/services/dashboard.service';
 import { NewsArticleInfo } from '../../core/models/dashboard.model';
 import { WeatherIconPipe } from '../../shared/pipes/weather-icon.pipe';
 
-type HomeNavigationTarget = 'weather' | 'transport' | 'calendar' | 'timers' | 'music' | 'news';
+type HomeNavigationTarget = 'weather' | 'cabin' | 'transport' | 'calendar' | 'timers' | 'music' | 'news';
 
 @Component({
   selector: 'app-home-view',

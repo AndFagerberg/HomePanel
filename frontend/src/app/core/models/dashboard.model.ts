@@ -6,6 +6,7 @@ export interface Dashboard {
   weather: WeatherInfo;
   weatherLocations: WeatherInfo[];
   indoor: IndoorInfo;
+  airPatrol: AirPatrolInfo | null;
   transport: TransportInfo;
   calendar: CalendarEventInfo[];
   schedule: ScheduleItemInfo[];
@@ -30,6 +31,26 @@ export interface WeatherInfo {
 export interface IndoorInfo {
   temperature: number;
   humidity: number;
+}
+
+export interface AirPatrolInfo {
+  name: string;
+  temperature: number;
+  humidity: number | null;
+  power: boolean;
+  mode: string;
+  targetTemperature: number | null;
+  fanSpeed: string;
+  swing: boolean;
+  updatedAt: string;
+  history: AirPatrolHistoryPoint[];
+}
+
+export interface AirPatrolHistoryPoint {
+  timestamp: string;
+  temperature: number;
+  humidity: number | null;
+  targetTemperature: number | null;
 }
 
 export interface TransportInfo {

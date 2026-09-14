@@ -2,6 +2,7 @@ using HouseholdPanel.Application.Abstractions;
 using HouseholdPanel.Application.Configuration;
 using HouseholdPanel.Application.Dashboard;
 using HouseholdPanel.Application.Timers;
+using HouseholdPanel.Domain.AirPatrol;
 using HouseholdPanel.Domain.Calendar;
 using HouseholdPanel.Domain.Indoor;
 using HouseholdPanel.Domain.News;
@@ -23,6 +24,8 @@ public sealed class DashboardQueryServiceTests
         var calendarService = new FakeCalendarService();
         var scheduleService = new FakeScheduleService();
         var newsService = new FakeNewsService();
+        var airPatrolService = new FakeAirPatrolService();
+        var airPatrolHistoryRepository = new FakeAirPatrolHistoryRepository();
         var timerService = new TimerService(new FakeTimerService());
         var weatherOptions = Options.Create(new WeatherOptions
         {
@@ -37,6 +40,8 @@ public sealed class DashboardQueryServiceTests
             calendarService,
             scheduleService,
             newsService,
+            airPatrolService,
+            airPatrolHistoryRepository,
             timerService,
             weatherOptions,
             transportOptions);
@@ -54,6 +59,9 @@ public sealed class DashboardQueryServiceTests
         Assert.Empty(dashboard.Schedule);
         Assert.Single(dashboard.NationalNews);
         Assert.Single(dashboard.LocalNews);
+        Assert.Equal("Stugan", dashboard.AirPatrol?.Name);
+        Assert.Equal(12.3m, dashboard.AirPatrol?.Temperature);
+        Assert.Single(dashboard.AirPatrol?.History ?? []);
         Assert.Empty(dashboard.Timers);
     }
 
@@ -101,6 +109,43 @@ public sealed class DashboardQueryServiceTests
         public Task<IReadOnlyList<NewsArticle>> GetLocalAsync(CancellationToken cancellationToken) =>
             Task.FromResult<IReadOnlyList<NewsArticle>>([
                 new NewsArticle("Smålandsnyhet", "Ingress", "SVT Nyheter Småland", DateTimeOffset.Now, "https://www.svt.se/nyheter/lokalt/smaland")
+            ]);
+    }
+
+    private sealed class FakeAirPatrolService : IAirPatrolService
+    {
+        public Task<AirPatrolStatus?> GetStatusAsync(CancellationToken cancellationToken) =>
+            Task.FromResult<AirPatrolStatus?>(new AirPatrolStatus(
+                "Stugan",
+                12.3m,
+                52,
+                true,
+                "lowheat",
+                10m,
+                "auto",
+                true,
+                DateTimeOffset.UtcNow));
+    }
+
+    private sealed class FakeAirPatrolHistoryRepository : IAirPatrolHistoryRepository
+    {
+        public Task SaveAsync(AirPatrolStatus status, CancellationToken cancellationToken) =>
+            Task.CompletedTask;
+
+        public Task<IReadOnlyList<AirPatrolStatus>> GetSinceAsync(
+            DateTimeOffset since,
+            CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyList<AirPatrolStatus>>([
+                new AirPatrolStatus(
+                    "Stugan",
+                    11.8m,
+                    51,
+                    true,
+                    "lowheat",
+                    10m,
+                    "auto",
+                    true,
+                    DateTimeOffset.UtcNow.AddHours(-1)),
             ]);
     }
 

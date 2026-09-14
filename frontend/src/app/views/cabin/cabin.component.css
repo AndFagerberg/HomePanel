@@ -1,0 +1,217 @@
+.cabin-view {
+  display: grid;
+  height: calc(100% - 4rem);
+  padding: 0.5rem 2rem 1rem;
+  box-sizing: border-box;
+  place-items: center;
+}
+
+.climate {
+  width: min(100%, 60rem);
+  padding: 0.75rem 1.5rem 1rem;
+  border: 1px solid var(--color-weather-border);
+  border-radius: 0.5rem;
+  background: var(--color-weather-surface);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.title {
+  color: var(--color-accent);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.location,
+.updated,
+.label {
+  color: var(--color-text-muted);
+}
+
+.location {
+  margin-top: 0.25rem;
+  font-size: 1.15rem;
+}
+
+.temperature {
+  margin: 0.35rem 0 0.1rem;
+  color: var(--color-text);
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.updated {
+  font-size: 0.75rem;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.detail {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.35rem;
+  border-top: 1px solid var(--color-border-muted);
+}
+
+.label {
+  font-size: 0.75rem;
+}
+
+.detail strong {
+  overflow-wrap: anywhere;
+}
+
+.unavailable {
+  color: var(--color-text-soft);
+}
+
+.history {
+  margin-top: 0.5rem;
+  text-align: left;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--color-text-muted);
+}
+
+.legend i {
+  width: 0.75rem;
+  height: 0.18rem;
+  margin-left: 0.35rem;
+}
+
+.temperature-key {
+  background: var(--color-accent);
+}
+
+.target-key {
+  background: var(--color-text-muted);
+}
+
+.humidity-key {
+  background: #55b9d4;
+}
+
+.chart-wrap {
+  position: relative;
+  height: 9rem;
+  margin: 0.25rem 2rem 0.75rem;
+}
+
+.chart {
+  width: 100%;
+  height: 8rem;
+  overflow: visible;
+}
+
+.chart polyline {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.temperature-line {
+  stroke: var(--color-accent);
+  stroke-width: 3;
+}
+
+.target-line {
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+  stroke-dasharray: 5 5;
+}
+
+.humidity-line {
+  stroke: #55b9d4;
+  stroke-width: 2;
+}
+
+.grid-line {
+  stroke: var(--color-border-muted);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.scale,
+.time {
+  position: absolute;
+  color: var(--color-text-muted);
+  font-size: 0.65rem;
+}
+
+.temperature-high,
+.temperature-low {
+  right: 100%;
+  margin-right: 0.35rem;
+}
+
+.humidity-high,
+.humidity-low {
+  left: 100%;
+  margin-left: 0.35rem;
+}
+
+.temperature-high,
+.humidity-high {
+  top: 0;
+}
+
+.temperature-low,
+.humidity-low {
+  top: 6.8rem;
+}
+
+.time {
+  top: 7.8rem;
+}
+
+.first-time {
+  left: 0;
+}
+
+.last-time {
+  right: 0;
+}
+
+.collecting {
+  display: grid;
+  height: 5rem;
+  place-items: center;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 700px) {
+  .cabin-view {
+    padding: 0.75rem 1rem 1.5rem;
+  }
+
+  .climate {
+    padding: 0.75rem 1rem;
+  }
+
+  .temperature {
+    font-size: 3rem;
+  }
+}

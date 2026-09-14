@@ -11,6 +11,16 @@
         <span class="weather-meta">{{ d.weather.minimumTemperature }}°–{{ d.weather.maximumTemperature }}° · {{ d.weather.precipitationProbability }}% regn</span>
       </button>
 
+      @if (d.airPatrol; as cabin) {
+        <button class="widget cabin-widget" type="button" (click)="navigate.emit('cabin')">
+          <span class="eyebrow"><span aria-hidden="true">⌂</span> {{ cabin.name }}</span>
+          <strong class="large-value">{{ cabin.temperature }}°</strong>
+          <span class="description">
+            @if (cabin.humidity !== null) { {{ cabin.humidity }}% luftfuktighet }
+          </span>
+        </button>
+      }
+
       <button class="widget transport-widget" type="button" (click)="navigate.emit('transport')">
         <span class="eyebrow">🚌 NÄSTA BUSS</span>
         @if (nextDeparture(); as departure) {

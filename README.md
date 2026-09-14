@@ -82,6 +82,21 @@ SR-radio spelas via en direkt MP3-ström från Sveriges Radio och castas från L
 
 Förvalda radiokanaler är P3 och P4 Kronoberg. Fler kanaler kan läggas till i `Music:RadioStations`.
 
+## AirPatrol
+
+AirPatrol-status läses av backend en gång i timmen. Varje mätning lagras i SQLite i sju dagar och visas som temperatur-, börvärdes- och luftfuktighetsgraf i Stugan-vyn. Databasen ligger som standard i `data/homepanel.db`; Docker Compose använder den permanenta volymen `homepanel-data`.
+
+Konfigurera användaren med miljövariabler så att credentials inte hamnar i Git:
+
+```text
+AirPatrol__Email=user@example.com
+AirPatrol__Password=secret
+AirPatrol__PairingId=44223
+AirPatrol__Name=Stugan
+```
+
+`PairingId` kan lämnas tomt om användarens första kopplade enhet ska användas. När `Email` eller `Password` saknas inaktiveras integrationen och Stugan visas inte på dashboarden.
+
 ## Dokumentation
 
 - [PROJECT.md](PROJECT.md) - arkitektur, API-kontrakt och implementationsplan.

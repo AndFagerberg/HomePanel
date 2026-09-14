@@ -8,6 +8,7 @@ public sealed record DashboardDto(
     WeatherDto Weather,
     IReadOnlyList<WeatherDto> WeatherLocations,
     IndoorDto Indoor,
+    AirPatrolDto? AirPatrol,
     TransportDto Transport,
     IReadOnlyList<CalendarEventDto> Calendar,
     IReadOnlyList<ScheduleItemDto> Schedule,
@@ -30,6 +31,24 @@ public sealed record WeatherDto(
 }
 
 public sealed record IndoorDto(decimal Temperature, int Humidity);
+
+public sealed record AirPatrolDto(
+    string Name,
+    decimal Temperature,
+    int? Humidity,
+    bool Power,
+    string Mode,
+    decimal? TargetTemperature,
+    string FanSpeed,
+    bool Swing,
+    DateTimeOffset UpdatedAt,
+    IReadOnlyList<AirPatrolHistoryPointDto> History);
+
+public sealed record AirPatrolHistoryPointDto(
+    DateTimeOffset Timestamp,
+    decimal Temperature,
+    int? Humidity,
+    decimal? TargetTemperature);
 
 public sealed record TransportDto(string StopName, IReadOnlyList<DepartureDto> Departures);
 

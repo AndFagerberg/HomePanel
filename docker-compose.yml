@@ -7,5 +7,10 @@ services:
     restart: unless-stopped
     ports:
       - "8080:8080"
+    volumes:
+      - homepanel-data:/app/data
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+
+volumes:
+  homepanel-data:

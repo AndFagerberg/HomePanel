@@ -12,6 +12,8 @@ public sealed class DashboardQueryService(
     ICalendarService calendarService,
     IScheduleService scheduleService,
     INewsService newsService,
+    IAirPatrolService airPatrolService,
+    IAirPatrolHistoryRepository airPatrolHistoryRepository,
     TimerService timerService,
     IOptions<WeatherOptions> weatherOptions,
     IOptions<TransportOptions> transportOptions) : IDashboardQueryService
@@ -44,6 +46,11 @@ public sealed class DashboardQueryService(
         var scheduleItems = await scheduleService.GetUpcomingItemsAsync(cancellationToken);
         var nationalNews = await newsService.GetNationalAsync(cancellationToken);
         var localNews = await newsService.GetLocalAsync(cancellationToken);
+        var airPatrol = await airPatrolService.GetStatusAsync(cancellationToken);
+        var airPatrolHistory = await airPatrolHistoryRepository.GetSinceAsync(
+            DateTimeOffset.UtcNow.AddDays(-7),
+            cancellationToken);
+        airPatrol ??= airPatrolHistory.LastOrDefault();
         var timers = await timerService.GetActiveAsync(cancellationToken);
 
         return new DashboardDto(
@@ -51,6 +58,25 @@ public sealed class DashboardQueryService(
             Weather: weatherLocations[0],
             WeatherLocations: weatherLocations,
             Indoor: new IndoorDto(indoor.Temperature, indoor.Humidity),
+            AirPatrol: airPatrol is null
+                ? null
+                : new AirPatrolDto(
+                    airPatrol.Name,
+                    airPatrol.Temperature,
+                    airPatrol.Humidity,
+                    airPatrol.Power,
+                    airPatrol.Mode,
+                    airPatrol.TargetTemperature,
+                    airPatrol.FanSpeed,
+                    airPatrol.Swing,
+                    airPatrol.UpdatedAt,
+                    airPatrolHistory
+                        .Select(status => new AirPatrolHistoryPointDto(
+                            status.UpdatedAt,
+                            status.Temperature,
+                            status.Humidity,
+                            status.TargetTemperature))
+                        .ToList()),
             Transport: new TransportDto(
                 transportOptions.Value.StopName,
                 departures

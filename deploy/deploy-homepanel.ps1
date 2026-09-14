@@ -12,7 +12,6 @@ $ErrorActionPreference = "Stop"
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $frontendDir = Join-Path $repoRoot "frontend"
 $apiProject = Join-Path $repoRoot "src/HouseholdPanel.Api/HouseholdPanel.Api.csproj"
-$developmentSettings = Join-Path $repoRoot "src/HouseholdPanel.Api/appsettings.Development.json"
 $frontendApiKeyPath = Join-Path $frontendDir "src/app/core/api/api-key.ts"
 $apiWwwroot = Join-Path $repoRoot "src/HouseholdPanel.Api/wwwroot"
 $frontendBuild = Join-Path $frontendDir "dist/frontend/browser"
@@ -46,38 +45,12 @@ function Invoke-Native {
     }
 }
 
-function Get-OrCreateApiKey {
-    param([string]$SettingsPath)
-
-    if (-not (Test-Path -Path $SettingsPath -PathType Leaf)) {
-        throw "Missing $SettingsPath. Create the ignored local Development configuration before deploying."
-    }
-
-    $settings = Get-Content -Raw -Path $SettingsPath | ConvertFrom-Json
-
-    if (-not $settings.PSObject.Properties['Security']) {
-        $settings | Add-Member -MemberType NoteProperty -Name 'Security' -Value ([pscustomobject]@{ ApiKey = '' })
-    }
-
-    if ([string]::IsNullOrWhiteSpace($settings.Security.ApiKey)) {
-        $keyBytes = New-Object byte[] 32
-        [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($keyBytes)
-        $settings.Security.ApiKey = [System.Convert]::ToBase64String($keyBytes) -replace '[/+=]', ''
-        ($settings | ConvertTo-Json -Depth 10) | Set-Content -Path $SettingsPath -Encoding utf8
-        Write-Host "Generated new API key in $SettingsPath"
-    }
-
-    return $settings.Security.ApiKey
-}
-
 Push-Location $repoRoot
 try {
-    Invoke-Step "Ensure API key is configured" {
-        $apiKey = Get-OrCreateApiKey -SettingsPath $developmentSettings
-        Set-Content -Path $frontendApiKeyPath -Encoding utf8 -Value @(
-            "// Local-only file (gitignored). Must match backend appsettings' Security:ApiKey."
-            "export const API_KEY = '$apiKey';"
-        )
+    Invoke-Step "Ensure local environment configuration exists" {
+        if (-not (Test-Path -Path $frontendApiKeyPath -PathType Leaf)) {
+            throw "Missing $frontendApiKeyPath. Run the ignored deploy/configure-homepanel-env.ps1 script before deploying."
+        }
     }
 
     Invoke-Step "Build frontend" {
@@ -101,10 +74,6 @@ try {
     }
 
     Invoke-Step "Publish backend for $Runtime" {
-        if (-not (Test-Path -Path $developmentSettings -PathType Leaf)) {
-            throw "Missing $developmentSettings. Create the ignored local Development configuration before deploying."
-        }
-
         Remove-Item -Recurse -Force $publishDir -ErrorAction SilentlyContinue
         New-Item -ItemType Directory -Force $publishDir | Out-Null
 
@@ -122,8 +91,6 @@ try {
             "-o",
             $publishDir
         )
-
-        Copy-Item -Force $developmentSettings (Join-Path $publishDir "appsettings.Development.json")
     }
 
     Invoke-Step "Create deployment archive" {
@@ -135,6 +102,12 @@ try {
         $remoteScript = @"
 set -e
 sudo mkdir -p /opt/homepanel
+sudo install -d -m 0750 /var/lib/homepanel
+sudo install -d -m 0750 /etc/homepanel
+if ! sudo test -f /etc/homepanel/homepanel.env; then
+    echo 'Missing /etc/homepanel/homepanel.env. Run deploy/configure-homepanel-env.ps1 first.' >&2
+    exit 1
+fi
 if systemctl list-unit-files homepanel.service > /dev/null 2>&1; then
     sudo systemctl stop homepanel || true
 fi
@@ -153,8 +126,9 @@ WorkingDirectory=/opt/homepanel
 ExecStart=/opt/homepanel/HouseholdPanel.Api
 Restart=always
 RestartSec=5
-Environment=ASPNETCORE_ENVIRONMENT=Development
+Environment=ASPNETCORE_ENVIRONMENT=Production
 Environment=ASPNETCORE_URLS=http://0.0.0.0:$Port
+EnvironmentFile=-/etc/homepanel/homepanel.env
 
 [Install]
 WantedBy=multi-user.target

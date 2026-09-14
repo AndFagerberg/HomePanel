@@ -19,6 +19,7 @@
     @switch (activeView()) {
       @case ('home') { <app-home-view (navigate)="selectView($event)"></app-home-view> }
       @case ('weather') { <app-weather-view></app-weather-view> }
+      @case ('cabin') { <app-cabin-view></app-cabin-view> }
       @case ('transport') { <app-transport-view></app-transport-view> }
       @case ('calendar') { <app-calendar-view></app-calendar-view> }
       @case ('timers') { <app-timers-view></app-timers-view> }
@@ -34,6 +35,7 @@
       <div class="drawer-heading">HomePanel</div>
       <button class="nav-item" [class.active]="activeView() === 'home'" type="button" (click)="selectView('home')">⌂ <span>Översikt</span></button>
       <button class="nav-item" [class.active]="activeView() === 'weather'" type="button" (click)="selectView('weather')">☀ <span>Väder</span></button>
+      <button class="nav-item" [class.active]="activeView() === 'cabin'" type="button" (click)="selectView('cabin')">⌂ <span>Stugan</span></button>
       <button class="nav-item" [class.active]="activeView() === 'transport'" type="button" (click)="selectView('transport')">🚌 <span>Buss</span></button>
       <button class="nav-item" [class.active]="activeView() === 'calendar'" type="button" (click)="selectView('calendar')">▣ <span>Kalender</span></button>
       <button class="nav-item" [class.active]="activeView() === 'timers'" type="button" (click)="selectView('timers')">⏱ <span>Timers</span></button>

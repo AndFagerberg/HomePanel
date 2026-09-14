@@ -1,0 +1,66 @@
+<div class="cabin-view">
+  @if (status(); as cabin) {
+    <section class="climate" aria-labelledby="cabin-heading">
+      <div class="title" id="cabin-heading">STUGAN</div>
+      <div class="location">{{ cabin.name }}</div>
+      <div class="temperature"><span aria-hidden="true">⌂</span> {{ cabin.temperature }}°</div>
+      <div class="updated">Uppdaterad {{ updatedLabel(cabin.updatedAt) }}</div>
+
+      <section class="history" aria-labelledby="history-heading">
+        <div class="history-header">
+          <strong id="history-heading">Senaste 7 dagarna</strong>
+          <span class="legend"><i class="temperature-key"></i> Temperatur <i class="target-key"></i> Börvärde <i class="humidity-key"></i> Fukt</span>
+        </div>
+        @if (chart(); as graph) {
+          <div class="chart-wrap">
+            <span class="scale temperature-high">{{ graph.maximumTemperature }}°</span>
+            <span class="scale temperature-low">{{ graph.minimumTemperature }}°</span>
+            <svg class="chart" viewBox="0 0 600 130" preserveAspectRatio="none" role="img" aria-label="Temperatur och luftfuktighet de senaste sju dagarna">
+              <line x1="12" y1="10" x2="588" y2="10" class="grid-line" />
+              <line x1="12" y1="65" x2="588" y2="65" class="grid-line" />
+              <line x1="12" y1="120" x2="588" y2="120" class="grid-line" />
+              <polyline [attr.points]="graph.targetPoints" class="target-line" />
+              <polyline [attr.points]="graph.humidityPoints" class="humidity-line" />
+              <polyline [attr.points]="graph.temperaturePoints" class="temperature-line" />
+            </svg>
+            <span class="scale humidity-high">{{ graph.maximumHumidity }}%</span>
+            <span class="scale humidity-low">{{ graph.minimumHumidity }}%</span>
+            <span class="time first-time">{{ graph.firstTimestamp }}</span>
+            <span class="time last-time">{{ graph.lastTimestamp }}</span>
+          </div>
+        } @else {
+          <div class="collecting">Grafen visas när minst två mätningar har sparats.</div>
+        }
+      </section>
+
+      <div class="details">
+        <div class="detail">
+          <span class="label">Luftfuktighet</span>
+          <strong>{{ cabin.humidity === null ? '–' : cabin.humidity + '%' }}</strong>
+        </div>
+        <div class="detail">
+          <span class="label">Värmepump</span>
+          <strong>{{ cabin.power ? 'På' : 'Av' }}</strong>
+        </div>
+        <div class="detail">
+          <span class="label">Läge</span>
+          <strong>{{ modeLabel(cabin.mode) }}</strong>
+        </div>
+        <div class="detail">
+          <span class="label">Börtemperatur</span>
+          <strong>{{ cabin.targetTemperature === null ? '–' : cabin.targetTemperature + '°' }}</strong>
+        </div>
+        <div class="detail">
+          <span class="label">Fläkt</span>
+          <strong>{{ cabin.fanSpeed }}</strong>
+        </div>
+        <div class="detail">
+          <span class="label">Swing</span>
+          <strong>{{ cabin.swing ? 'På' : 'Av' }}</strong>
+        </div>
+      </div>
+    </section>
+  } @else {
+    <div class="unavailable">Ingen status från Stugan</div>
+  }
+</div>

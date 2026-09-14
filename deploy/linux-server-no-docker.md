@@ -63,7 +63,23 @@ sudo mkdir -p /opt/homepanel
 sudo cp -r /tmp/homepanel/* /opt/homepanel/
 sudo chown -R root:root /opt/homepanel
 sudo chmod +x /opt/homepanel/HouseholdPanel.Api
+sudo install -d -m 0750 /var/lib/homepanel
+sudo install -d -m 0750 /etc/homepanel
 ```
+
+Applikationsfilerna i `/opt/homepanel` ersätts vid varje deploy. SQLite-databasen ligger därför separat i `/var/lib/homepanel` så att historiken behålls vid uppdateringar.
+
+På utvecklingsmaskinen finns det lokala scriptet `deploy/configure-homepanel-env.ps1`. Det innehåller hela serverkonfigurationen, skapar eller ersätter `/etc/homepanel/homepanel.env` via SSH och genererar frontendens lokala API-nyckelfil. Scriptet och API-nyckelfilen ignoreras av Git eftersom de innehåller hemligheter.
+
+Granska värdena i scriptet och kör det före första deploy samt varje gång serverkonfigurationen ändras:
+
+```powershell
+.\deploy\configure-homepanel-env.ps1 `
+  -HostName homepanel.lan `
+  -User andy
+```
+
+Du kan få ange SSH- och `sudo`-lösenord. Scriptet startar om `homepanel` automatiskt om tjänsten redan är installerad. Miljöfilen ligger utanför `/opt/homepanel` och skrivs inte över av deploy-scriptet.
 
 ## 3. Skapa systemd-tjänst
 
@@ -81,9 +97,9 @@ WorkingDirectory=/opt/homepanel
 ExecStart=/opt/homepanel/HouseholdPanel.Api
 Restart=always
 RestartSec=5
-Environment=ASPNETCORE_ENVIRONMENT=Development
+Environment=ASPNETCORE_ENVIRONMENT=Production
 Environment=ASPNETCORE_URLS=http://0.0.0.0:8080
-Environment=Music__GoogleHome__DeviceName=Kitchen speaker
+EnvironmentFile=-/etc/homepanel/homepanel.env
 
 [Install]
 WantedBy=multi-user.target
@@ -135,6 +151,8 @@ echo 'export DASHBOARD_URL="http://homepanel.lan:8080"' >> ~/.bash_profile
 ## Uppdatera appen senare
 
 Det enklaste är att köra deploy-scriptet från repo-roten på utvecklingsmaskinen. Det bygger frontend, publicerar backend för Linux, kopierar artefakten till `homepanel.lan`, installerar eller uppdaterar `systemd`-tjänsten och testar `/api/dashboard` lokalt på servern. Efter omstart väntar scriptet upp till 20 sekunder på att appen ska börja svara.
+
+Deploy-scriptet läser inte `appsettings.Development.json`. Serverkonfigurationen kommer från `/etc/homepanel/homepanel.env`, och frontendens API-nyckel kommer från filen som `configure-homepanel-env.ps1` genererar. Kör konfigurationsscriptet först på en ny utvecklingsmaskin eller efter att API-nyckeln ändrats.
 
 ```powershell
 .\deploy\deploy-homepanel.ps1
@@ -192,6 +210,8 @@ Och dessa steg på servern:
 
 ```bash
 sudo mkdir -p /opt/homepanel
+sudo install -d -m 0750 /var/lib/homepanel
+sudo install -d -m 0750 /etc/homepanel
 sudo tar -xzf /tmp/homepanel-linux-x64.tar.gz -C /opt/homepanel
 sudo chown -R root:root /opt/homepanel
 sudo chmod +x /opt/homepanel/HouseholdPanel.Api
@@ -199,4 +219,12 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now homepanel
 sudo systemctl restart homepanel
 curl http://localhost:8080/api/dashboard
+```
+
+Databasen kan säkerhetskopieras utan att röra installationskatalogen:
+
+```bash
+sudo systemctl stop homepanel
+sudo cp /var/lib/homepanel/homepanel.db /var/lib/homepanel/homepanel.db.backup
+sudo systemctl start homepanel
 ```

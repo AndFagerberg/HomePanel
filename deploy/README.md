@@ -4,15 +4,22 @@ Deployment artifacts for the two runtime targets described in [PROJECT.md](../PR
 
 ## Linux server (backend + frontend)
 
-Build and run with Docker:
+Normal drift är en färdig self-contained release som körs direkt med systemd på den minimala Linux-servern. Deploy-scriptet bygger på utvecklingsmaskinen, installerar till `/opt/homepanel` och behåller SQLite-data i `/var/lib/homepanel`:
+
+```powershell
+.\deploy\configure-homepanel-env.ps1
+.\deploy\deploy-homepanel.ps1
+```
+
+Det första scriptet är lokalt och ignoreras av Git eftersom det innehåller serverns fullständiga konfiguration och hemligheter. Det uppdaterar `/etc/homepanel/homepanel.env` och frontendens lokala API-nyckel. Det andra scriptet publicerar själva applikationen och är helt oberoende av `appsettings.Development.json`.
+
+Fullständig installation och konfiguration finns i [`linux-server-no-docker.md`](linux-server-no-docker.md).
+
+Docker är ett alternativ för utveckling eller andra miljöer:
 
 ```bash
 docker compose up -d --build
 ```
-
-The container serves both the REST API (`/api/dashboard`) and the Angular production build on port 8080.
-
-If the server is too small to build or run Docker comfortably, build the release on the development machine and run the published app directly with systemd instead: see [`linux-server-no-docker.md`](linux-server-no-docker.md).
 
 ## Raspberry Pi (display client)
 
