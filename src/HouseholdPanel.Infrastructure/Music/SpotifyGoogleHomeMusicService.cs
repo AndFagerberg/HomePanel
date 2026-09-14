@@ -15,6 +15,7 @@ public sealed class SpotifyGoogleHomeMusicService(
     IOptions<MusicOptions> options) : IMusicService
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+    private static MusicPlayback? activeRadioPlayback;
 
     public Task<IReadOnlyList<RadioStation>> GetRadioStationsAsync(CancellationToken cancellationToken)
     {
@@ -79,6 +80,63 @@ public sealed class SpotifyGoogleHomeMusicService(
 
         using var response = await httpClient.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
+        activeRadioPlayback = null;
+    }
+
+    public async Task<MusicPlayback?> GetCurrentPlaybackAsync(CancellationToken cancellationToken)
+    {
+        var spotifyOptions = options.Value.Spotify;
+        if (!IsSpotifyConfigured(spotifyOptions))
+        {
+            return activeRadioPlayback;
+        }
+
+        var accessToken = await GetSpotifyAccessTokenAsync(spotifyOptions, cancellationToken);
+        using var request = new HttpRequestMessage(HttpMethod.Get, "https://api.spotify.com/v1/me/player");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        using var response = await httpClient.SendAsync(request, cancellationToken);
+        if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+        {
+            return activeRadioPlayback;
+        }
+
+        response.EnsureSuccessStatusCode();
+        await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        var payload = await JsonSerializer.DeserializeAsync<SpotifyPlaybackResponse>(responseStream, JsonOptions, cancellationToken);
+        if (payload?.Item is null || !payload.IsPlaying)
+        {
+            return activeRadioPlayback;
+        }
+
+        return new MusicPlayback(
+            payload.Item.Name,
+            ArtistsText(payload.Item.Artists),
+            payload.Item.Album?.Name,
+            FirstImage(payload.Item.Album?.Images),
+            payload.IsPlaying);
+    }
+
+    public async Task StopPlaybackAsync(CancellationToken cancellationToken)
+    {
+        var spotifyOptions = options.Value.Spotify;
+        var radioWasPlaying = activeRadioPlayback is not null;
+
+        if (!radioWasPlaying && IsSpotifyConfigured(spotifyOptions))
+        {
+            var accessToken = await GetSpotifyAccessTokenAsync(spotifyOptions, cancellationToken);
+            using var request = new HttpRequestMessage(HttpMethod.Put, "https://api.spotify.com/v1/me/player/pause");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            using var response = await httpClient.SendAsync(request, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        if (radioWasPlaying)
+        {
+            await StopRadioAsync(cancellationToken);
+            activeRadioPlayback = null;
+        }
     }
 
     public async Task PlayRadioAsync(string stationId, CancellationToken cancellationToken)
@@ -130,6 +188,49 @@ public sealed class SpotifyGoogleHomeMusicService(
         {
             var error = await process.StandardError.ReadToEndAsync(cancellationToken);
             throw new InvalidOperationException($"Google Home cast command failed: {error}");
+        }
+
+        activeRadioPlayback = new MusicPlayback(station.Name, "Radio", null, null, true);
+    }
+
+    private async Task StopRadioAsync(CancellationToken cancellationToken)
+    {
+        var googleHomeOptions = options.Value.GoogleHome;
+        if (string.IsNullOrWhiteSpace(googleHomeOptions.CastExecutable)
+            || string.IsNullOrWhiteSpace(googleHomeOptions.DeviceName))
+        {
+            throw new InvalidOperationException("Google Home casting is not configured.");
+        }
+
+        using var process = new Process();
+        process.StartInfo.FileName = googleHomeOptions.CastExecutable;
+        process.StartInfo.RedirectStandardError = true;
+        process.StartInfo.UseShellExecute = false;
+        foreach (var argument in googleHomeOptions.StopArguments)
+        {
+            process.StartInfo.ArgumentList.Add(argument.Replace(
+                "{DeviceName}", googleHomeOptions.DeviceName, StringComparison.Ordinal));
+        }
+
+        try
+        {
+            if (!process.Start())
+            {
+                throw new InvalidOperationException("Could not start Google Home stop command.");
+            }
+        }
+        catch (System.ComponentModel.Win32Exception exception)
+        {
+            throw new InvalidOperationException(
+                $"The cast executable '{googleHomeOptions.CastExecutable}' was not found. Install catt or configure Music:GoogleHome:CastExecutable.",
+                exception);
+        }
+
+        await process.WaitForExitAsync(cancellationToken);
+        if (process.ExitCode != 0)
+        {
+            var error = await process.StandardError.ReadToEndAsync(cancellationToken);
+            throw new InvalidOperationException($"Google Home stop command failed: {error}");
         }
     }
 
@@ -225,6 +326,10 @@ public sealed class SpotifyGoogleHomeMusicService(
         string Uri,
         IReadOnlyList<SpotifyArtist>? Artists,
         SpotifyAlbum? Album);
+
+    private sealed record SpotifyPlaybackResponse(
+        [property: JsonPropertyName("is_playing")] bool IsPlaying,
+        SpotifyTrack? Item);
 
     private sealed record SpotifyAlbum(
         string Id,

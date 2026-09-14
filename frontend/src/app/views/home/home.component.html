@@ -52,11 +52,19 @@
         }
       </button>
 
-      <button class="widget music-widget" type="button" (click)="navigate.emit('music')">
+      <section class="widget music-widget" (click)="navigate.emit('music')">
         <span class="eyebrow">♫ NU SPELAS</span>
-        <strong class="large-value">Musik</strong>
-        <span class="description">Sök Spotify eller starta radio</span>
-      </button>
+        @if (d.music; as music) {
+          <strong class="music-title">{{ music.title }}</strong>
+          <span class="description">{{ music.artist }}</span>
+          <button class="stop-button" type="button" [disabled]="stoppingMusic()" (click)="stopMusic($event)">
+            ■ Stoppa
+          </button>
+        } @else {
+          <strong class="large-value">Ingen musik</strong>
+          <span class="description">Sök Spotify eller starta radio</span>
+        }
+      </section>
 
       <button class="widget news-widget" type="button" (click)="navigate.emit('news')">
         <span class="eyebrow">▤ SENASTE NYTT</span>

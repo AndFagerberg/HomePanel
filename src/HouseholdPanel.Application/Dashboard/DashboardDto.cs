@@ -1,5 +1,6 @@
 namespace HouseholdPanel.Application.Dashboard;
 
+using HouseholdPanel.Application.Music;
 using HouseholdPanel.Application.Timers;
 
 // Presentation-oriented DTO contract returned by GET /api/dashboard. Frontend never sees domain models.
@@ -14,7 +15,10 @@ public sealed record DashboardDto(
     IReadOnlyList<ScheduleItemDto> Schedule,
     IReadOnlyList<NewsArticleDto> NationalNews,
     IReadOnlyList<NewsArticleDto> LocalNews,
-    IReadOnlyList<TimerDto> Timers);
+    IReadOnlyList<TimerDto> Timers)
+{
+    public MusicPlaybackDto? Music { get; init; }
+}
 
 public sealed record WeatherDto(
     string Name,

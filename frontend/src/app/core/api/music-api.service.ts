@@ -26,4 +26,8 @@ export class MusicApiService {
   playRadio(request: PlayRadioRequest): Observable<void> {
     return this.httpClient.post<void>('/api/music/radio/play', request);
   }
+
+  stopPlayback(): Observable<void> {
+    return this.httpClient.post<void>('/api/music/stop', {});
+  }
 }

@@ -5,6 +5,7 @@ using HouseholdPanel.Application.Timers;
 using HouseholdPanel.Domain.AirPatrol;
 using HouseholdPanel.Domain.Calendar;
 using HouseholdPanel.Domain.Indoor;
+using HouseholdPanel.Domain.Music;
 using HouseholdPanel.Domain.News;
 using HouseholdPanel.Domain.Schedule;
 using HouseholdPanel.Domain.Transport;
@@ -26,6 +27,7 @@ public sealed class DashboardQueryServiceTests
         var newsService = new FakeNewsService();
         var airPatrolService = new FakeAirPatrolService();
         var airPatrolHistoryRepository = new FakeAirPatrolHistoryRepository();
+        var musicService = new FakeMusicService();
         var timerService = new TimerService(new FakeTimerService());
         var weatherOptions = Options.Create(new WeatherOptions
         {
@@ -42,6 +44,7 @@ public sealed class DashboardQueryServiceTests
             newsService,
             airPatrolService,
             airPatrolHistoryRepository,
+            musicService,
             timerService,
             weatherOptions,
             transportOptions);
@@ -75,6 +78,24 @@ public sealed class DashboardQueryServiceTests
     {
         public Task<IndoorReading> GetCurrentAsync(CancellationToken cancellationToken) =>
             Task.FromResult(new IndoorReading(20.5m, 45));
+    }
+
+    private sealed class FakeMusicService : IMusicService
+    {
+        public Task<IReadOnlyList<RadioStation>> GetRadioStationsAsync(CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyList<RadioStation>>([]);
+
+        public Task<IReadOnlyList<MusicSearchResult>> SearchSpotifyAsync(string query, CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyList<MusicSearchResult>>([]);
+
+        public Task<MusicPlayback?> GetCurrentPlaybackAsync(CancellationToken cancellationToken) =>
+            Task.FromResult<MusicPlayback?>(null);
+
+        public Task PlaySpotifyAsync(string uri, CancellationToken cancellationToken) => Task.CompletedTask;
+
+        public Task StopPlaybackAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+        public Task PlayRadioAsync(string stationId, CancellationToken cancellationToken) => Task.CompletedTask;
     }
 
     private sealed class FakeTransportService : ITransportService

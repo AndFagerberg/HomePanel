@@ -1,5 +1,6 @@
 using HouseholdPanel.Application.Abstractions;
 using HouseholdPanel.Application.Configuration;
+using HouseholdPanel.Application.Music;
 using HouseholdPanel.Application.Timers;
 using Microsoft.Extensions.Options;
 
@@ -14,6 +15,7 @@ public sealed class DashboardQueryService(
     INewsService newsService,
     IAirPatrolService airPatrolService,
     IAirPatrolHistoryRepository airPatrolHistoryRepository,
+    IMusicService musicService,
     TimerService timerService,
     IOptions<WeatherOptions> weatherOptions,
     IOptions<TransportOptions> transportOptions) : IDashboardQueryService
@@ -52,6 +54,7 @@ public sealed class DashboardQueryService(
             cancellationToken);
         airPatrol ??= airPatrolHistory.LastOrDefault();
         var timers = await timerService.GetActiveAsync(cancellationToken);
+        var music = await musicService.GetCurrentPlaybackAsync(cancellationToken);
 
         return new DashboardDto(
             Timestamp: DateTimeOffset.Now,
@@ -94,7 +97,12 @@ public sealed class DashboardQueryService(
                 .ToList(),
             NationalNews: nationalNews.Select(MapNewsArticle).ToList(),
             LocalNews: localNews.Select(MapNewsArticle).ToList(),
-            Timers: timers);
+            Timers: timers)
+        {
+            Music = music is null
+                ? null
+                : new MusicPlaybackDto(music.Title, music.Artist, music.Album, music.ImageUrl, music.IsPlaying),
+        };
     }
 
     private static NewsArticleDto MapNewsArticle(HouseholdPanel.Domain.News.NewsArticle article) =>

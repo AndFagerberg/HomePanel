@@ -33,6 +33,14 @@ public sealed class MusicService(IMusicService musicService)
             .ToList();
     }
 
+    public async Task<MusicPlaybackDto?> GetCurrentPlaybackAsync(CancellationToken cancellationToken)
+    {
+        var playback = await musicService.GetCurrentPlaybackAsync(cancellationToken);
+        return playback is null
+            ? null
+            : new MusicPlaybackDto(playback.Title, playback.Artist, playback.Album, playback.ImageUrl, playback.IsPlaying);
+    }
+
     public Task PlaySpotifyAsync(PlaySpotifyRequest request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.Uri))
@@ -52,4 +60,7 @@ public sealed class MusicService(IMusicService musicService)
 
         return musicService.PlayRadioAsync(request.StationId.Trim(), cancellationToken);
     }
+
+    public Task StopPlaybackAsync(CancellationToken cancellationToken) =>
+        musicService.StopPlaybackAsync(cancellationToken);
 }

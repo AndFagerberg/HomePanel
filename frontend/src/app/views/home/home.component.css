@@ -28,6 +28,35 @@
   text-align: left;
 }
 
+.music-widget {
+  cursor: pointer;
+}
+
+.music-title {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1.35rem;
+}
+
+.stop-button {
+  margin-top: 0.35rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.35rem;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.stop-button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
 .widget:nth-child(1) {
   background: var(--color-surface-info);
 }

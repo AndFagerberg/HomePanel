@@ -59,11 +59,16 @@ public sealed class MusicServiceTests
             return Task.FromResult<IReadOnlyList<MusicSearchResult>>([]);
         }
 
+        public Task<MusicPlayback?> GetCurrentPlaybackAsync(CancellationToken cancellationToken) =>
+            Task.FromResult<MusicPlayback?>(null);
+
         public Task PlaySpotifyAsync(string uri, CancellationToken cancellationToken)
         {
             PlayedSpotifyUri = uri;
             return Task.CompletedTask;
         }
+
+        public Task StopPlaybackAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
         public Task PlayRadioAsync(string stationId, CancellationToken cancellationToken) =>
             Task.CompletedTask;

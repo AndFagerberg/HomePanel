@@ -8,7 +8,11 @@ public interface IMusicService
 
     Task<IReadOnlyList<MusicSearchResult>> SearchSpotifyAsync(string query, CancellationToken cancellationToken);
 
+    Task<MusicPlayback?> GetCurrentPlaybackAsync(CancellationToken cancellationToken);
+
     Task PlaySpotifyAsync(string uri, CancellationToken cancellationToken);
+
+    Task StopPlaybackAsync(CancellationToken cancellationToken);
 
     Task PlayRadioAsync(string stationId, CancellationToken cancellationToken);
 }

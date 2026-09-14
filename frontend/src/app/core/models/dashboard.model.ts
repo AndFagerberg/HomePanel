@@ -13,6 +13,15 @@ export interface Dashboard {
   nationalNews: NewsArticleInfo[];
   localNews: NewsArticleInfo[];
   timers: TimerInfo[];
+  music: MusicPlaybackInfo | null;
+}
+
+export interface MusicPlaybackInfo {
+  title: string;
+  artist: string;
+  album: string | null;
+  imageUrl?: string;
+  isPlaying: boolean;
 }
 
 export interface WeatherInfo {

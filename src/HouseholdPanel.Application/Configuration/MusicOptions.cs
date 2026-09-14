@@ -44,6 +44,8 @@ public sealed class GoogleHomeOptions
     public string CastExecutable { get; init; } = "catt";
 
     public IReadOnlyList<string> CastArguments { get; init; } = ["-d", "{DeviceName}", "cast", "{Url}"];
+
+    public IReadOnlyList<string> StopArguments { get; init; } = ["-d", "{DeviceName}", "stop"];
 }
 
 public sealed class RadioStationOptions

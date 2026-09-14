@@ -15,3 +15,10 @@ public sealed record RadioStationDto(
 public sealed record PlaySpotifyRequest(string Uri);
 
 public sealed record PlayRadioRequest(string StationId);
+
+public sealed record MusicPlaybackDto(
+    string Title,
+    string Artist,
+    string? Album,
+    string? ImageUrl,
+    bool IsPlaying);

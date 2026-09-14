@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnDestroy, OnInit, output, signal } from '@angular/core';
 import { DashboardService } from '../../core/services/dashboard.service';
+import { MusicService } from '../../core/services/music.service';
 import { NewsArticleInfo } from '../../core/models/dashboard.model';
 import { WeatherIconPipe } from '../../shared/pipes/weather-icon.pipe';
 
@@ -14,6 +15,7 @@ type HomeNavigationTarget = 'weather' | 'cabin' | 'transport' | 'calendar' | 'ti
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private readonly dashboardService = inject(DashboardService);
+  private readonly musicService = inject(MusicService);
   private clockTimer?: ReturnType<typeof setInterval>;
 
   readonly navigate = output<HomeNavigationTarget>();
@@ -22,6 +24,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   readonly nextDeparture = computed(() => this.dashboard()?.transport.departures[0] ?? null);
   readonly nextEvent = computed(() => this.dashboard()?.calendar[0] ?? null);
   readonly latestNews = computed(() => this.getLatestNews());
+  readonly stoppingMusic = signal(false);
 
   ngOnInit(): void {
     this.clockTimer = setInterval(() => this.now.set(Date.now()), 1_000);
@@ -37,6 +40,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     const seconds = remainingSeconds % 60;
 
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  async stopMusic(event: Event): Promise<void> {
+    event.stopPropagation();
+    this.stoppingMusic.set(true);
+
+    try {
+      await this.musicService.stopPlayback();
+      await this.dashboardService.refresh();
+    } finally {
+      this.stoppingMusic.set(false);
+    }
   }
 
   private getLatestNews(): NewsArticleInfo[] {

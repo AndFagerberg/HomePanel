@@ -41,6 +41,33 @@ public sealed class MusicController(MusicService musicService) : ControllerBase
         }
     }
 
+    [HttpGet("spotify/current")]
+    public async Task<ActionResult<MusicPlaybackDto?>> GetCurrentPlayback(CancellationToken cancellationToken)
+    {
+        try
+        {
+            return Ok(await musicService.GetCurrentPlaybackAsync(cancellationToken));
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { error = exception.Message });
+        }
+    }
+
+    [HttpPost("stop")]
+    public async Task<IActionResult> StopPlayback(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await musicService.StopPlaybackAsync(cancellationToken);
+            return Accepted();
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { error = exception.Message });
+        }
+    }
+
     [HttpPost("radio/play")]
     public async Task<IActionResult> PlayRadio(
         PlayRadioRequest request,

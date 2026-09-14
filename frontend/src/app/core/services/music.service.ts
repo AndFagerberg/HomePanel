@@ -32,4 +32,8 @@ export class MusicService {
   async playRadio(stationId: string): Promise<void> {
     await firstValueFrom(this.musicApiService.playRadio({ stationId }));
   }
+
+  async stopPlayback(): Promise<void> {
+    await firstValueFrom(this.musicApiService.stopPlayback());
+  }
 }
